@@ -88,6 +88,12 @@ dimension: traffic_source {
   sql: ${TABLE}.traffic_source ;;
 }
 
+dimension: full_name{
+  type: string
+  sql: concat(${first_name}, “ ”, ${last_name}) ;;
+
+}
+
 dimension: zip {
   type: zipcode
   sql: ${TABLE}.zip ;;
