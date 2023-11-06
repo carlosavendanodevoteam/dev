@@ -67,6 +67,11 @@ dimension: last_name {
   sql: ${TABLE}.last_name ;;
 }
 
+  dimension: is_email_source {
+    type: yesno
+    sql: ${traffic_source} = "Email" ;;
+  }
+
 dimension: latitude {
   type: number
   sql: ${TABLE}.latitude ;;
