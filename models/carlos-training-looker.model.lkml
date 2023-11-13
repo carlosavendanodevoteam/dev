@@ -29,6 +29,7 @@ persist_with: carlos_training_looker_default_datagroup
 explore: inventory_items {
 }
 
+
 explore: products {}
 
 explore: distribution_centers {}
