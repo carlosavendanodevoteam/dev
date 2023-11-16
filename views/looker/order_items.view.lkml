@@ -130,6 +130,20 @@ measure: total_revenue_from_completed_orders {
     value_format_name: usd_0
   }
 
+  measure: total_revenue_email_users {
+    type: sum
+    sql: ${sale_price} ;;
+    filters: [users.is_email_source: "Yes"]
+    value_format_name: usd
+  }
+
+  measure: percent_revenue_email_source {
+    type: number
+    value_format_name: percent_2
+    sql: 1.0*${total_revenue_email_users}
+      /NULLIF(${total_revenue}, 0) ;;
+  }
+
 # ----- Sets of fields for drilling ------
 set: detail {
   fields: [
