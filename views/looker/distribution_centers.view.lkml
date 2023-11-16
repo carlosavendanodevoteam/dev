@@ -22,6 +22,7 @@ dimension: latitude {
   sql: ${TABLE}.latitude ;;
 }
 
+
 dimension: longitude {
   type: number
   sql: ${TABLE}.longitude ;;
