@@ -45,6 +45,13 @@ explore: users {
 }
 
 explore: order_items {
+
+  join: user_order_summary {
+    type: left_outer
+    sql_on: ${order_items.user_id} = ${user_order_summary.user_id};;
+    relationship: many_to_one
+  }
+
   join: users {
     type: left_outer
     sql_on: ${order_items.user_id} = ${users.id} ;;
