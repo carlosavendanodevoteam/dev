@@ -89,10 +89,7 @@ dimension: traffic_source {
   sql: ${TABLE}.traffic_source ;;
 }
 
-  dimension: is_email_source {
-    type: yesno
-    sql: ${traffic_source} = "Email" ;;
-  }
+
 
 
 dimension: zip {
@@ -101,17 +98,7 @@ dimension: zip {
 }
 
 
-  dimension: days_since_signup {
-    type: number
-    sql: DATE_DIFF(current_date(), ${created_date}, DAY);;
-  }
 
-  dimension: age_tier {
-    type: tier
-    tiers: [18, 25, 35, 45, 55, 65, 75, 90]
-    sql: ${age} ;;
-    style: integer
-  }
 
 measure: count {
   type: count
