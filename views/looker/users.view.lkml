@@ -89,16 +89,17 @@ dimension: traffic_source {
   sql: ${TABLE}.traffic_source ;;
 }
 
+  dimension: is_email_source {
+    type: yesno
+    sql: ${traffic_source} = "Email" ;;
+  }
+
 
 dimension: zip {
   type: zipcode
   sql: ${TABLE}.zip ;;
 }
 
-dimension: is_email_source {
-    type: yesno
-    sql: ${traffic_source} = "Email" ;;
-  }
 
   dimension: days_since_signup {
     type: number
