@@ -39,9 +39,10 @@ explore: orders {}
 explore: events {}
 
 explore: users {
-  always_filter: {
-    filters: [age: "20"]
-    }
+ always_filter: {
+   filters: [age: "20"]
+   }
+    # sql_always_where: ${age}=20 ;;
 }
 
 explore: order_items {
