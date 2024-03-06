@@ -17,7 +17,7 @@ view: products {
   sql: ${TABLE}.id ;;
 }
 
-dimension: brand {
+dimension: brand_3 {
   type: string
   sql: ${TABLE}.brand ;;
 }
