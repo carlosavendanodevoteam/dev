@@ -11,7 +11,7 @@ view: products {
     # A dimension is a groupable field that can be used to filter query results.
     # This dimension will be called "Brand" in Explore.
 
- dimension: id {
+ dimension: id{
   primary_key: yes
   type: number
   sql: ${TABLE}.id ;;
