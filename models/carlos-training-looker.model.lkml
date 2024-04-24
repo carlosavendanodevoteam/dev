@@ -11,6 +11,7 @@ datagroup: carlos_training_looker_default_datagroup {
   # sql_trigger: SELECT MAX(id) FROM etl_log;;
   max_cache_age: "1 hour"
   sql_trigger: SELECT max(id) FROM my_tablename ;;
+
 }
 
 persist_with: carlos_training_looker_default_datagroup
