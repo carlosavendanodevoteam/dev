@@ -15,6 +15,10 @@ datagroup: carlos_training_looker_default_datagroup {
 
 persist_with: carlos_training_looker_default_datagroup
 
+map_layer: test_map {
+  file: "/maps/final_modified.topojson"
+}
+
 # Explores allow you to join together different views (database tables) based on the
 # relationships between fields. By joining a view into an Explore, you make those
 # fields available to users for data analysis.
@@ -39,11 +43,13 @@ explore: orders {}
 explore: events {}
 
 explore: users {
- always_filter: {
+  always_filter: {
    filters: [age: "20"]
    }
-    # sql_always_where: ${age}=20 ;;
+   # sql_always_where: ${age}=20 ;;
 }
+
+explore: test_map {}
 
 explore: order_items {
 
@@ -75,4 +81,24 @@ explore: order_items {
     sql_on: ${products.distribution_center_id} = ${distribution_centers.id} ;;
     relationship: many_to_one
   }
+
+  join: order_details {
+   type: left_outer
+    sql_on: ${order_items.order_id} = ${order_details.order_id};;
+    relationship: many_to_one
+  }
+  join: siglo {
+
+    type: left_outer
+
+    sql_on: ${order_items.user_id} = ${siglo.user_id};;
+
+    relationship: many_to_one
+
+  }
+
+
+
 }
+
+explore: diglo_sql_runner {}

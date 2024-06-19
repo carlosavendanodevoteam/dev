@@ -75,6 +75,49 @@ dimension: sale_price {
   sql: ${TABLE}.sale_price ;;
 }
 
+
+  measure: percent_revenue_email_source {
+
+    type: number
+
+    value_format_name: percent_2
+
+    sql: 1.0*${total_revenue_email_users}
+
+        /NULLIF(${total_revenue}, 0) ;;
+
+  }
+
+
+
+
+  measure: total_revenue_email_users {
+
+    type: sum
+
+    sql: ${sale_price} ;;
+
+    filters: [users.is_email_source: "Yes"]
+
+    value_format_name: usd
+
+  }
+
+
+
+
+  measure: total_sales {
+
+    type: sum
+
+    sql: ${sale_price} ;;
+
+    value_format_name: usd_0
+
+  }
+
+
+
 dimension_group: shipped {
   type: time
   timeframes: [

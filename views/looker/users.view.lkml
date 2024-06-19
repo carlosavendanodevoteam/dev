@@ -22,6 +22,21 @@ dimension: age {
   sql: ${TABLE}.age ;;
 }
 
+  dimension: age_tier {
+
+    type: tier
+
+    tiers: [18, 25, 35, 45, 55, 65, 75, 90]
+
+    sql: ${age} ;;
+
+    style: interval
+
+  }
+
+
+
+
 dimension: city {
   type: string
   sql: ${TABLE}.city ;;
@@ -46,6 +61,15 @@ dimension_group: created {
   ]
   sql: ${TABLE}.created_at ;;
 }
+
+
+  dimension: days_since_signup {
+
+    type: number
+
+    sql: DATE_DIFF(current_date(), ${created_date}, DAY);;
+
+  }
 
 dimension: email {
   type: string
@@ -90,14 +114,26 @@ dimension: traffic_source {
 }
 
 
+  dimension: is_email_source {
 
+    type: yesno
+
+    sql: ${traffic_source} = "Email" ;;
+
+  }
 
 dimension: zip {
   type: zipcode
   sql: ${TABLE}.zip ;;
 }
 
+  dimension: full_name {
 
+    type: string
+
+    sql: concat(${first_name},"  ", ${last_name}) ;;
+
+  }
 
 
 measure: count {
