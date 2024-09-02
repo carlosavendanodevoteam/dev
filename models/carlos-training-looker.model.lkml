@@ -101,4 +101,4 @@ explore: order_items {
 
 }
 
-explore: diglo_sql_runner {}
+explore: test_region {}
