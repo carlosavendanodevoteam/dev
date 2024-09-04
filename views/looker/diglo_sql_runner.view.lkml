@@ -38,7 +38,7 @@ view: diglo_sql_runner {
     sql: ${TABLE}.order_item_count ;;
   }
 
-  dimension: order_revenue {
+  dimension: order_revenuea {
     type: number
     sql: ${TABLE}.order_revenue ;;
   }
@@ -47,8 +47,7 @@ view: diglo_sql_runner {
     fields: [
         order_id,
   user_id,
-  order_item_count,
-  order_revenue
+  order_item_count
     ]
   }
 }
