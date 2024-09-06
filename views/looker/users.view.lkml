@@ -122,7 +122,7 @@ dimension: traffic_source {
 
   }
 
-dimension: zip {
+dimension: zips {
   type: zipcode
   sql: ${TABLE}.zip ;;
 }
