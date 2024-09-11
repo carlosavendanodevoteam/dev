@@ -71,10 +71,6 @@ dimension_group: returned {
   sql: ${TABLE}.returned_at ;;
 }
 
-  dimension: sale_price_2 {
-    type: number
-    sql: ${TABLE}.sale_price ;;
-  }
 
 dimension: sale_price {
   type: number
