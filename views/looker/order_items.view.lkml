@@ -12,6 +12,7 @@ view: order_items {
 
 dimension: order_item_id {
   primary_key: yes
+  # No primary ke
   type: number
   sql: ${TABLE}.id ;;
 }
@@ -69,6 +70,11 @@ dimension_group: returned {
   ]
   sql: ${TABLE}.returned_at ;;
 }
+
+  dimension: sale_price_2 {
+    type: number
+    sql: ${TABLE}.sale_price ;;
+  }
 
 dimension: sale_price {
   type: number
