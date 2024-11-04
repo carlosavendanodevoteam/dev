@@ -31,6 +31,38 @@ view: order_items {
           {% endif %};;
   }
 
+  dimension: dynamic_fecha {
+    sql:
+concat("fecha elegida ",CAST({% date_start date_filter_1 %} AS DATE));;
+  }
+
+  dimension: dynamic_fecha_2 {
+    sql:
+    concat("fecha elegida ",CAST({% date_start date_filter_2 %} AS DATE));;
+  }
+
+  dimension: dynamic_comparativa{
+    sql:
+    concat("comparacion entre ",CAST({% date_start date_filter_1 %} AS DATE)," y ",CAST({% date_start date_filter_2 %} AS DATE));;
+  }
+
+  dimension: dynamic_date_1 {
+    sql:  ${filter_start_date_1_date};;
+    html:{{ rendered_value | date: "Fecha elegida 1: %Y-%m-%d"}};;
+
+  }
+
+  dimension: dynamic_date_2 {
+    sql:  ${filter_start_date_2_date};;
+    html:{{ rendered_value | date: "Fecha elegida 2: %Y-%m-%d" }};;
+
+  }
+
+  dimension: dynamic_date_diference {
+    sql: CONCAT('Diferencia entre ', ${filter_start_date_1_date}, ' y ', ${filter_start_date_2_date}) ;;
+    html: {{value}} ;;
+  }
+
   filter: date_filter_1 {
     description: "Use this date filter in combination with the timeframes dimension for dynamic date filtering"
     type: date
