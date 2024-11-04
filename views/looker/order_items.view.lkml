@@ -12,22 +12,22 @@ view: order_items {
   parameter: filtro_transportista {
     type: unquoted
     allowed_value: {
-      label: "Transportistas desagrupados"
+      label: "Titulo 1"
       value: "desagrupados"
     }
     allowed_value: {
-      label: "Transportistas Agrupados"
+      label: "Titulo 2"
       value: "agrupados"
     }
   }
   dimension: dynamic_transportista {
     sql:
           {% if filtro_transportista._parameter_value == 'desagrupados' %}
-             "desagrupados"
+             "Ejemplo 1"
           {% elsif filtro_transportista._parameter_value == 'agrupados' %}
-           "agrupados"
+           "Ejemplo dos"
              {% else %}
-          "agrupados"
+          "Ejemplo 1"
           {% endif %};;
   }
 
