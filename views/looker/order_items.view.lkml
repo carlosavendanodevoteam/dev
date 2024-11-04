@@ -9,6 +9,97 @@ view: order_items {
 
   # Dates and timestamps can be represented in Looker using a dimension group of type: time.
   # Looker converts dates and timestamps to the specified timeframes within the dimension group.
+  parameter: filtro_transportista {
+    type: unquoted
+    allowed_value: {
+      label: "Transportistas desagrupados"
+      value: "desagrupados"
+    }
+    allowed_value: {
+      label: "Transportistas Agrupados"
+      value: "agrupados"
+    }
+  }
+  dimension: dynamic_transportista {
+    sql:
+          {% if filtro_transportista._parameter_value == 'desagrupados' %}
+             "desagrupados"
+          {% elsif filtro_transportista._parameter_value == 'agrupados' %}
+           "agrupados"
+             {% else %}
+          "agrupados"
+          {% endif %};;
+  }
+
+  filter: date_filter_1 {
+    description: "Use this date filter in combination with the timeframes dimension for dynamic date filtering"
+    type: date
+  }
+
+  filter: date_filter_2 {
+    description: "Use this date filter in combination with the timeframes dimension for dynamic date filtering"
+    type: date
+  }
+
+  dimension_group: filter_start_date_1 {
+    type: time
+    timeframes: [raw,date]
+    sql: CASE WHEN {% date_start date_filter_1 %} IS NULL THEN CURRENT_DATE ELSE CAST({% date_start date_filter_1 %} AS DATE) END;;
+  }
+
+
+  dimension_group: filter_start_date_2 {
+    type: time
+    timeframes: [raw,date]
+    sql: CASE WHEN {% date_start date_filter_2 %} IS NULL THEN CURRENT_DATE ELSE CAST({% date_start date_filter_2 %} AS DATE) END;;
+  }
+
+
+  dimension: is_current_period_1 {
+    type: yesno
+    sql: ${created_date} = ${filter_start_date_1_date} ;;
+  }
+  dimension: is_current_period_2 {
+    type: yesno
+    sql: ${created_date} = ${filter_start_date_2_date} ;;
+  }
+
+  measure: total_sales_1 {
+
+    type: sum
+
+    sql: ${sale_price} ;;
+    filters: {
+      field: is_current_period_1
+      value: "yes"
+    }
+
+    value_format_name: usd_0
+
+  }
+  measure: total_sales_2 {
+
+    type: sum
+
+    sql: ${sale_price} ;;
+    filters: {
+      field: is_current_period_2
+      value: "yes"
+    }
+
+    value_format_name: usd_0
+
+  }
+
+  measure: total_sales_diferencia {
+
+    type: number
+
+    sql: ${total_sales_1}-${total_sales_2};;
+
+    value_format_name: usd_0
+
+  }
 
 dimension: order_item_id {
   primary_key: yes
