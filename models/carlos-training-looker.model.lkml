@@ -13,6 +13,11 @@ datagroup: carlos_training_looker_default_datagroup {
   sql_trigger: SELECT max(id) FROM my_tablename ;;
 }
 
+access_grant: access_test_rsi {
+  user_attribute: test_rsi
+  allowed_values: [ "yes" ]
+}
+
 persist_with: carlos_training_looker_default_datagroup
 
 map_layer: test_map {
