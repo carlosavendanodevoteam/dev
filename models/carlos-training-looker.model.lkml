@@ -58,11 +58,12 @@ explore: test_map {}
 
 explore: order_items {
 
-  join: user_order_summary {
-    type: left_outer
-    sql_on: ${order_items.user_id} = ${user_order_summary.user_id};;
-    relationship: many_to_one
+  access_filter: {
+    field: status
+    user_attribute: status_filter
   }
+
+
 
   join: users {
     type: left_outer
@@ -92,15 +93,7 @@ explore: order_items {
     sql_on: ${order_items.order_id} = ${order_details.order_id};;
     relationship: many_to_one
   }
-  join: siglo {
 
-    type: left_outer
-
-    sql_on: ${order_items.user_id} = ${siglo.user_id};;
-
-    relationship: many_to_one
-
-  }
 
 
 
