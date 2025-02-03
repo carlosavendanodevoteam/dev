@@ -7,6 +7,50 @@ view: order_items {
   # No primary key is defined for this view. In order to join this view in an Explore,
   # define primary_key: yes on a dimension that has no repeated values.
 
+
+  parameter: selected_month {
+    type: string
+    allowed_value: {
+      label: "January"
+      value: "01"
+    }
+    allowed_value: {
+      label: "February"
+      value: "02"
+    }
+    allowed_value: {
+      label: "March"
+      value: "03"
+    }
+    # Agrega el resto de los meses...
+  }
+
+  parameter: filter_type {
+    type: string
+    allowed_value: {
+      label: "Solo ese mes"
+      value: "month"
+    }
+    allowed_value: {
+      label: "Desde el 1 de enero hasta ese mes"
+      value: "year_to_month"
+    }
+  }
+
+  dimension: temporal_filter {
+    type: yesno
+    sql:
+    CASE
+      WHEN {% parameter filter_type %} = 'month' THEN
+        DATE_TRUNC(${created_date}, MONTH) = DATE(CONCAT(EXTRACT(YEAR FROM CURRENT_DATE()), '-', {% parameter selected_month %}, '-01'))
+      WHEN {% parameter filter_type %} = 'year_to_month' THEN
+        DATE(${created_date}) BETWEEN DATE(CONCAT(EXTRACT(YEAR FROM CURRENT_DATE()), '-01-01'))
+                                 AND LAST_DAY(DATE(CONCAT(EXTRACT(YEAR FROM CURRENT_DATE()), '-', {% parameter selected_month %}, '-01')))
+      ELSE NULL
+    END ;;
+  }
+
+
   # Dates and timestamps can be represented in Looker using a dimension group of type: time.
   # Looker converts dates and timestamps to the specified timeframes within the dimension group.
   parameter: filtro_transportista {
