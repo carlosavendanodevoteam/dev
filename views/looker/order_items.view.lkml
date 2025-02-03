@@ -308,7 +308,6 @@ dimension_group: shipped {
 dimension: status {
   type: string
   sql: ${TABLE}.status ;;
-  required_access_grants: [access_test_rsi]
 }
 
 dimension: user_id {
