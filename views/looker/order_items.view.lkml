@@ -222,6 +222,7 @@ dimension: inventory_item_id {
 }
 
 dimension: order_id {
+  required_access_grants: [access_test_rsi]
   type: number
   sql: ${TABLE}.order_id ;;
 }
