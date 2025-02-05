@@ -58,11 +58,24 @@ explore: test_map {}
 
 explore: order_items {
 
-sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
-  access_filter: {
-    field: status
-    user_attribute: status_filter
-  }
+
+
+  #  access_filter: {
+ #   field: status
+ #   user_attribute: status_filter
+ # }
+
+
+
+#sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
+
+#always_filter:
+#{
+#filters: [distribution_centers.name: "Houston TX"]
+# }
+
+
+
 
 
 
