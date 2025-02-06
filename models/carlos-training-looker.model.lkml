@@ -60,10 +60,10 @@ explore: order_items {
 
 
 
-  #  access_filter: {
- #   field: status
- #   user_attribute: status_filter
- # }
+   access_filter: {
+    field: status
+    user_attribute: status_filter
+  }
 
 
 
