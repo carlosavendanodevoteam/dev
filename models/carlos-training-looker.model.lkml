@@ -38,6 +38,7 @@ map_layer: test_map {
 explore: inventory_items {
 }
 
+explore: vista_sql_runner {}
 
 explore: products {}
 
@@ -60,10 +61,10 @@ explore: order_items {
 
 
 
-   access_filter: {
-    field: status
-    user_attribute: status_filter
-  }
+  # access_filter: {
+  #  field: status
+  #  user_attribute: status_filter
+  #}
 
 
 
@@ -72,7 +73,7 @@ explore: order_items {
 #always_filter:
 #{
 #filters: [distribution_centers.name: "Houston TX"]
-# }
+ #}
 
 
 
