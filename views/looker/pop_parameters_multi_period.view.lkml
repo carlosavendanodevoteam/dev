@@ -155,29 +155,29 @@ view: pop_parameters_multi_period {
   }
 
   dimension: period_2_start {
-    hidden:  yes
+    hidden: yes
     view_label: "_PoP"
     description: "Calculates the start of the previous period"
     type: date
     sql:
-            {% if compare_to._parameter_value == "Period" %}
-            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -${days_in_period} DAY)
-            {% else %}
-            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -1 {% parameter compare_to %})
-            {% endif %};;
+        {% if compare_to._parameter_value == "Period" %}
+        DATE_ADD({% date_start current_date_range %}, INTERVAL -${days_in_period} DAY)
+        {% else %}
+        DATE_ADD({% date_start current_date_range %}, INTERVAL -1 {% parameter compare_to %})
+        {% endif %};;
   }
 
   dimension: period_2_end {
-    hidden:  yes
+    hidden: yes
     view_label: "_PoP"
     description: "Calculates the end of the previous period"
     type: date
     sql:
-            {% if compare_to._parameter_value == "Period" %}
-            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -1 DAY)
-            {% else %}
-            DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -1 {% parameter compare_to %})
-            {% endif %};;
+        {% if compare_to._parameter_value == "Period" %}
+        DATE_ADD({% date_start current_date_range %}, INTERVAL -1 DAY)
+        {% else %}
+        DATE_ADD(DATE_ADD({% date_end current_date_range %}, INTERVAL -1 DAY), INTERVAL -1 {% parameter compare_to %})
+        {% endif %};;
   }
 
   dimension: period_3_start {
@@ -186,9 +186,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -(2 * ${days_in_period}) DAY)
+        DATE_ADD({% date_start current_date_range %}, INTERVAL -(2 * ${days_in_period}) DAY)
         {% else %}
-            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -2 {% parameter compare_to %})
+        DATE_ADD({% date_start current_date_range %}, INTERVAL -2 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -199,9 +199,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-            DATE_ADD(${period_2_start}, INTERVAL -1 DAY)
+        DATE_ADD(${period_2_start}, INTERVAL -1 DAY)
         {% else %}
-            DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -2 {% parameter compare_to %})
+        DATE_ADD(DATE_ADD({% date_end current_date_range %}, INTERVAL -1 DAY), INTERVAL -2 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -212,9 +212,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -(3 * ${days_in_period}) DAY)
+        DATE_ADD({% date_start current_date_range %}, INTERVAL -(3 * ${days_in_period}) DAY)
         {% else %}
-            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -3 {% parameter compare_to %})
+        DATE_ADD({% date_start current_date_range %}, INTERVAL -3 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -224,11 +224,11 @@ view: pop_parameters_multi_period {
     description: "Calculates the end of 4 periods ago"
     type: date
     sql:
-            {% if compare_to._parameter_value == "Period" %}
-            DATE_ADD(${period_2_start}, INTERVAL -1 DAY)
-            {% else %}
-            DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -3 {% parameter compare_to %})
-            {% endif %};;
+        {% if compare_to._parameter_value == "Period" %}
+        DATE_ADD(${period_2_start}, INTERVAL -1 DAY)
+        {% else %}
+        DATE_ADD(DATE_ADD({% date_end current_date_range %}, INTERVAL -1 DAY), INTERVAL -3 {% parameter compare_to %})
+        {% endif %};;
     hidden: yes
   }
 
