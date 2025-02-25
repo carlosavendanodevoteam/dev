@@ -13,6 +13,11 @@ datagroup: carlos_training_looker_default_datagroup {
   sql_trigger: SELECT max(id) FROM my_tablename ;;
 }
 
+access_grant: access_test_rsi {
+  user_attribute: test_rsi
+  allowed_values: [ "yes" ]
+}
+
 persist_with: carlos_training_looker_default_datagroup
 
 map_layer: test_map {
@@ -33,6 +38,7 @@ map_layer: test_map {
 explore: inventory_items {
 }
 
+explore: vista_sql_runner {}
 
 explore: products {}
 
@@ -53,11 +59,26 @@ explore: test_map {}
 
 explore: order_items {
 
-  join: user_order_summary {
-    type: left_outer
-    sql_on: ${order_items.user_id} = ${user_order_summary.user_id};;
-    relationship: many_to_one
-  }
+
+
+  # access_filter: {
+  #  field: status
+  #  user_attribute: status_filter
+  #}
+
+
+
+#sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
+
+#always_filter:
+#{
+#filters: [distribution_centers.name: "Houston TX"]
+ #}
+
+
+
+
+
 
   join: users {
     type: left_outer
@@ -87,15 +108,7 @@ explore: order_items {
     sql_on: ${order_items.order_id} = ${order_details.order_id};;
     relationship: many_to_one
   }
-  join: siglo {
 
-    type: left_outer
-
-    sql_on: ${order_items.user_id} = ${siglo.user_id};;
-
-    relationship: many_to_one
-
-  }
 
 
 

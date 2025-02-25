@@ -7,28 +7,105 @@ view: order_items {
   # No primary key is defined for this view. In order to join this view in an Explore,
   # define primary_key: yes on a dimension that has no repeated values.
 
+
+  parameter: selected_month {
+    type: string
+    allowed_value: {
+      label: "January"
+      value: "01"
+    }
+    allowed_value: {
+      label: "February"
+      value: "02"
+    }
+    allowed_value: {
+      label: "March"
+      value: "03"
+    }
+    # Agrega el resto de los meses...
+  }
+
+  parameter: filter_type {
+    type: string
+    allowed_value: {
+      label: "Solo ese mes"
+      value: "month"
+    }
+    allowed_value: {
+      label: "Desde el 1 de enero hasta ese mes"
+      value: "year_to_month"
+    }
+  }
+
+  dimension: temporal_filter {
+    type: yesno
+    sql:
+    CASE
+      WHEN {% parameter filter_type %} = 'month' THEN
+        DATE_TRUNC(${created_date}, MONTH) = DATE(CONCAT(EXTRACT(YEAR FROM CURRENT_DATE()), '-', {% parameter selected_month %}, '-01'))
+      WHEN {% parameter filter_type %} = 'year_to_month' THEN
+        DATE(${created_date}) BETWEEN DATE(CONCAT(EXTRACT(YEAR FROM CURRENT_DATE()), '-01-01'))
+                                 AND LAST_DAY(DATE(CONCAT(EXTRACT(YEAR FROM CURRENT_DATE()), '-', {% parameter selected_month %}, '-01')))
+      ELSE NULL
+    END ;;
+  }
+
+
   # Dates and timestamps can be represented in Looker using a dimension group of type: time.
   # Looker converts dates and timestamps to the specified timeframes within the dimension group.
   parameter: filtro_transportista {
+    required_access_grants: [access_test_rsi]
     type: unquoted
     allowed_value: {
-      label: "Transportistas desagrupados"
+      label: "Titulo 1"
       value: "desagrupados"
     }
     allowed_value: {
-      label: "Transportistas Agrupados"
+      label: "Titulo 2"
       value: "agrupados"
     }
   }
   dimension: dynamic_transportista {
     sql:
           {% if filtro_transportista._parameter_value == 'desagrupados' %}
-             "desagrupados"
+             "Ejemplo 1"
           {% elsif filtro_transportista._parameter_value == 'agrupados' %}
-           "agrupados"
+           "Ejemplo dos"
              {% else %}
-          "agrupados"
+          "Ejemplo 1"
           {% endif %};;
+  }
+
+  dimension: dynamic_fecha {
+    sql:
+concat("fecha elegida ",CAST({% date_start date_filter_1 %} AS DATE));;
+  }
+
+  dimension: dynamic_fecha_2 {
+    sql:
+    concat("fecha elegida ",CAST({% date_start date_filter_2 %} AS DATE));;
+  }
+
+  dimension: dynamic_comparativa{
+    sql:
+    concat("comparacion entre ",CAST({% date_start date_filter_1 %} AS DATE)," y ",CAST({% date_start date_filter_2 %} AS DATE));;
+  }
+
+  dimension: dynamic_date_1 {
+    sql:  ${filter_start_date_1_date};;
+    html:{{ rendered_value | date: "Fecha elegida 1: %Y-%m-%d"}};;
+
+  }
+
+  dimension: dynamic_date_2 {
+    sql:  ${filter_start_date_2_date};;
+    html:{{ rendered_value | date: "Fecha elegida 2: %Y-%m-%d" }};;
+
+  }
+
+  dimension: dynamic_date_diference {
+    sql: CONCAT('Diferencia entre ', ${filter_start_date_1_date}, ' y ', ${filter_start_date_2_date}) ;;
+    html: {{value}} ;;
   }
 
   filter: date_filter_1 {
@@ -122,6 +199,7 @@ dimension_group: created {
   sql: ${TABLE}.created_at ;;
 }
 
+
 dimension_group: delivered {
   type: time
   timeframes: [
@@ -144,6 +222,7 @@ dimension: inventory_item_id {
 }
 
 dimension: order_id {
+  required_access_grants: [access_test_rsi]
   type: number
   sql: ${TABLE}.order_id ;;
 }
