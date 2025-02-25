@@ -728,6 +728,14 @@ measure: total_revenue_from_completed_orders {
   value_format_name: usd
 }
 
+parameter: fecha {
+  type: date
+}
+
+dimension: year_to_date {
+  type:  yesno
+  sql: DATE(${created_date}) BETWEEN DATE(CONCAT(EXTRACT(YEAR FROM {%parameter fecha%}), '-01-01')) AND DATE({%parameter fecha%})  ;;
+}
 
 
 # ----- Sets of fields for drilling ------
