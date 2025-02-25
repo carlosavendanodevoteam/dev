@@ -161,9 +161,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
             {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -${days_in_period}, DATE({% date_start current_date_range %}))
+            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -${days_in_period} DAY)
             {% else %}
-            DATEADD({% parameter compare_to %}, -1, DATE({% date_start current_date_range %}))
+            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -1 {% parameter compare_to %})
             {% endif %};;
   }
 
@@ -174,9 +174,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
             {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -1, DATE({% date_start current_date_range %}))
+            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -1 DAY)
             {% else %}
-            DATEADD({% parameter compare_to %}, -1, DATEADD(DAY, -1, DATE({% date_end current_date_range %})))
+            DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -1 {% parameter compare_to %})
             {% endif %};;
   }
 
@@ -186,12 +186,11 @@ view: pop_parameters_multi_period {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -(2 * ${days_in_period}), DATE({% date_start current_date_range %}))
+            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -(2 * ${days_in_period}) DAY)
         {% else %}
-            DATEADD({% parameter compare_to %}, -2, DATE({% date_start current_date_range %}))
+            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -2 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
-
   }
 
   dimension: period_3_end {
@@ -200,9 +199,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -1, ${period_2_start})
+            DATE_ADD(${period_2_start}, INTERVAL -1 DAY)
         {% else %}
-            DATEADD({% parameter compare_to %}, -2, DATEADD(DAY, -1, DATE({% date_end current_date_range %})))
+            DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -2 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -213,9 +212,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -(3 * ${days_in_period}), DATE({% date_start current_date_range %}))
+            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -(3 * ${days_in_period}) DAY)
         {% else %}
-            DATEADD({% parameter compare_to %}, -3, DATE({% date_start current_date_range %}))
+            DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -3 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -226,13 +225,12 @@ view: pop_parameters_multi_period {
     type: date
     sql:
             {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -1, ${period_2_start})
+            DATE_ADD(${period_2_start}, INTERVAL -1 DAY)
             {% else %}
-            DATEADD({% parameter compare_to %}, -3, DATEADD(DAY, -1, DATE({% date_end current_date_range %})))
+            DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -3 {% parameter compare_to %})
             {% endif %};;
     hidden: yes
   }
-
 
   dimension: period {
     view_label: "_PoP"
