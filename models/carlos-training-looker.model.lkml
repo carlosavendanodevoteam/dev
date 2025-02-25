@@ -123,13 +123,13 @@ explore: pop_parameters_multi_period {
             {% if pop_parameters_multi_period.current_date_range._is_filtered %} {% condition pop_parameters_multi_period.current_date_range %} ${created_raw} {% endcondition %}
             {% if pop_parameters_multi_period.previous_date_range._is_filtered or pop_parameters_multi_period.compare_to._in_query %}
             {% if pop_parameters_multi_period.comparison_periods._parameter_value == "2" %}
-                or ${created_raw} between ${period_2_start} and ${period_2_end}
+                or DATE(${created_raw}) between  DATE(${period_2_start}) and  DATE(${period_2_end})
             {% elsif pop_parameters_multi_period.comparison_periods._parameter_value == "3" %}
-                or ${created_raw} between ${period_2_start} and ${period_2_end}
-                or ${created_raw} between ${period_3_start} and ${period_3_end}
+                or  DATE(${created_raw}) between  DATE(${period_2_start} and  DATE(${period_2_end})
+                or  DATE(${created_raw}) between  DATE(${period_3_start} and  DATE(${period_3_end})
             {% elsif pop_parameters_multi_period.comparison_periods._parameter_value == "4" %}
-                or ${created_raw} between ${period_2_start} and ${period_2_end}
-                or ${created_raw} between ${period_3_start} and ${period_3_end} or ${created_raw} between ${period_4_start} and ${period_4_end}
+                or  DATE(${created_raw}) between  DATE(${period_2_start}) and  DATE(${period_2_end})
+                or  DATE(${created_raw}) between  DATE(${period_3_start})and  DATE(${period_3_end}) or  DATE(${created_raw}) between  DATE(${period_4_start}) and  DATE(${period_4_end})
             {% else %} 1 = 1
             {% endif %}
             {% endif %}
