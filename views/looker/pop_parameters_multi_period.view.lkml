@@ -147,11 +147,11 @@ view: pop_parameters_multi_period {
   }
 
   dimension: days_in_period {
-    hidden:  yes
+    hidden: yes
     view_label: "_PoP"
     description: "Gives the number of days in the current period date range"
     type: number
-    sql: DATEDIFF(DAY, DATE({% date_start current_date_range %}), DATE({% date_end current_date_range %})) ;;
+    sql: DATE_DIFF(DATE({% date_end current_date_range %}), DATE({% date_start current_date_range %}), DAY) ;;
   }
 
   dimension: period_2_start {
@@ -161,9 +161,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-        DATE_ADD({% date_start current_date_range %}, INTERVAL -${days_in_period} DAY)
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -${days_in_period} DAY)
         {% else %}
-        DATE_ADD({% date_start current_date_range %}, INTERVAL -1 {% parameter compare_to %})
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -1 {% parameter compare_to %})
         {% endif %};;
   }
 
@@ -174,9 +174,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-        DATE_ADD({% date_start current_date_range %}, INTERVAL -1 DAY)
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -1 DAY)
         {% else %}
-        DATE_ADD(DATE_ADD({% date_end current_date_range %}, INTERVAL -1 DAY), INTERVAL -1 {% parameter compare_to %})
+        DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -1 {% parameter compare_to %})
         {% endif %};;
   }
 
@@ -186,9 +186,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-        DATE_ADD({% date_start current_date_range %}, INTERVAL -(2 * ${days_in_period}) DAY)
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -(2 * ${days_in_period}) DAY)
         {% else %}
-        DATE_ADD({% date_start current_date_range %}, INTERVAL -2 {% parameter compare_to %})
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -2 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -201,7 +201,7 @@ view: pop_parameters_multi_period {
         {% if compare_to._parameter_value == "Period" %}
         DATE_ADD(${period_2_start}, INTERVAL -1 DAY)
         {% else %}
-        DATE_ADD(DATE_ADD({% date_end current_date_range %}, INTERVAL -1 DAY), INTERVAL -2 {% parameter compare_to %})
+        DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -2 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -212,9 +212,9 @@ view: pop_parameters_multi_period {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-        DATE_ADD({% date_start current_date_range %}, INTERVAL -(3 * ${days_in_period}) DAY)
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -(3 * ${days_in_period}) DAY)
         {% else %}
-        DATE_ADD({% date_start current_date_range %}, INTERVAL -3 {% parameter compare_to %})
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -3 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -227,7 +227,7 @@ view: pop_parameters_multi_period {
         {% if compare_to._parameter_value == "Period" %}
         DATE_ADD(${period_2_start}, INTERVAL -1 DAY)
         {% else %}
-        DATE_ADD(DATE_ADD({% date_end current_date_range %}, INTERVAL -1 DAY), INTERVAL -3 {% parameter compare_to %})
+        DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -3 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -239,24 +239,22 @@ view: pop_parameters_multi_period {
     type: string
     order_by_field: order_for_period
     sql:
-            {% if current_date_range._is_filtered %}
-                CASE
-                WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
-                THEN 'This {% parameter compare_to %}'
-                WHEN ${created_date} between ${period_2_start} and ${period_2_end}
-                THEN 'Last {% parameter compare_to %}'
-                WHEN ${created_date} between ${period_3_start} and ${period_3_end}
-                THEN '2 {% parameter compare_to %}s Ago'
-                WHEN ${created_date} between ${period_4_start} and ${period_4_end}
-                THEN '3 {% parameter compare_to %}s Ago'
-                END
-            {% else %}
-                NULL
-            {% endif %}
-            ;;
+    {% if current_date_range._is_filtered %}
+      CASE
+        WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
+        THEN 'This {% parameter compare_to %}'
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_2_start}) AND DATE(${period_2_end})
+        THEN 'Last {% parameter compare_to %}'
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_3_start}) AND DATE(${period_3_end})
+        THEN '2 {% parameter compare_to %}s Ago'
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_4_start}) AND DATE(${period_4_end})
+        THEN '3 {% parameter compare_to %}s Ago'
+      END
+    {% else %}
+      NULL
+    {% endif %}
+  ;;
   }
-
-
 
   dimension: order_for_period {
     hidden: yes
@@ -264,48 +262,44 @@ view: pop_parameters_multi_period {
     label: "Period"
     type: string
     sql:
-            {% if current_date_range._is_filtered %}
-                CASE
-                WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
-                THEN 1
-                WHEN ${created_date} between ${period_2_start} and ${period_2_end}
-                THEN 2
-                WHEN ${created_date} between ${period_3_start} and ${period_3_end}
-                THEN 3
-                WHEN ${created_date} between ${period_4_start} and ${period_4_end}
-                THEN 4
-                END
-            {% else %}
-                NULL
-            {% endif %}
-            ;;
+    {% if current_date_range._is_filtered %}
+      CASE
+        WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
+        THEN 1
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_2_start}) AND DATE(${period_2_end})
+        THEN 2
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_3_start}) AND DATE(${period_3_end})
+        THEN 3
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_4_start}) AND DATE(${period_4_end})
+        THEN 4
+      END
+    {% else %}
+      NULL
+    {% endif %}
+  ;;
   }
 
   dimension: day_in_period {
-    description: "Gives the number of days since the start of each periods. Use this to align the event dates onto the same axis, the axes will read 1,2,3, etc."
+    description: "Gives the number of days since the start of each period. Use this to align the event dates onto the same axis, the axes will read 1,2,3, etc."
     type: number
     sql:
-        {% if current_date_range._is_filtered %}
-            CASE
-            WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
-            THEN DATEDIFF(DAY, DATE({% date_start current_date_range %}), ${created_date}) + 1
-
-      WHEN ${created_date} between ${period_2_start} and ${period_2_end}
-      THEN DATEDIFF(DAY, ${period_2_start}, ${created_date}) + 1
-
-      WHEN ${created_date} between ${period_3_start} and ${period_3_end}
-      THEN DATEDIFF(DAY, ${period_3_start}, ${created_date}) + 1
-
-      WHEN ${created_date} between ${period_4_start} and ${period_4_end}
-      THEN DATEDIFF(DAY, ${period_4_start}, ${created_date}) + 1
+    {% if current_date_range._is_filtered %}
+      CASE
+        WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
+        THEN DATE_DIFF(DATE(${created_date}), DATE({% date_start current_date_range %}), DAY) + 1
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_2_start}) AND DATE(${period_2_end})
+        THEN DATE_DIFF(DATE(${created_date}), DATE(${period_2_start}), DAY) + 1
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_3_start}) AND DATE(${period_3_end})
+        THEN DATE_DIFF(DATE(${created_date}), DATE(${period_3_start}), DAY) + 1
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_4_start}) AND DATE(${period_4_end})
+        THEN DATE_DIFF(DATE(${created_date}), DATE(${period_4_start}), DAY) + 1
       END
-
-      {% else %} NULL
-      {% endif %}
-      ;;
+    {% else %}
+      NULL
+    {% endif %}
+  ;;
     hidden: yes
   }
-
 
 
 
