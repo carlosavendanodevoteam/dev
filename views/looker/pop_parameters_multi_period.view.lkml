@@ -4,7 +4,7 @@
 view: pop_parameters_multi_period {
   # The sql_table_name parameter indicates the underlying database table
   # to be used for all fields in this view.
-  sql_table_name: `looker.order_items` ;;
+  sql_table_name: `looker.order_items_extended` ;;
 
   # No primary key is defined for this view. In order to join this view in an Explore,
   # define primary_key: yes on a dimension that has no repeated values.
@@ -231,6 +231,28 @@ view: pop_parameters_multi_period {
         {% endif %};;
     hidden: yes
   }
+
+
+  dimension_group: date_in_period {
+    description: "Use this as your grouping dimension when comparing periods. Aligns the previous periods onto the current period"
+    label: "Current Period"
+    type: time
+    sql: DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL ${day_in_period} - 1 DAY);;
+    view_label: "_PoP"
+    timeframes: [
+      date,
+      hour_of_day,
+      day_of_week,
+      day_of_week_index,
+      day_of_month,
+      day_of_year,
+      week_of_year,
+      month,
+      month_name,
+      month_num,
+      year]
+  }
+
 
   dimension: period {
     view_label: "_PoP"

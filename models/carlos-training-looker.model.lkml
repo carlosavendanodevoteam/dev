@@ -124,9 +124,9 @@ explore: pop_parameters_multi_period {
             {% if pop_parameters_multi_period.previous_date_range._is_filtered or pop_parameters_multi_period.compare_to._in_query %}
             {% if pop_parameters_multi_period.comparison_periods._parameter_value == "2" %}
                 or DATE(${created_raw}) between  DATE(${period_2_start}) and  DATE(${period_2_end})
-            {% elsif pop_parameters_multi_period.comparison_periods._parameter_value == "3" %}
-                or  DATE(${created_raw}) between  DATE(${period_2_start} and  DATE(${period_2_end})
-                or  DATE(${created_raw}) between  DATE(${period_3_start} and  DATE(${period_3_end})
+{% elsif pop_parameters_multi_period.comparison_periods._parameter_value == "3" %}
+    or DATE(${created_raw}) BETWEEN DATE(${period_2_start}) AND DATE(${period_2_end})
+    or DATE(${created_raw}) BETWEEN DATE(${period_3_start}) AND DATE(${period_3_end})
             {% elsif pop_parameters_multi_period.comparison_periods._parameter_value == "4" %}
                 or  DATE(${created_raw}) between  DATE(${period_2_start}) and  DATE(${period_2_end})
                 or  DATE(${created_raw}) between  DATE(${period_3_start})and  DATE(${period_3_end}) or  DATE(${created_raw}) between  DATE(${period_4_start}) and  DATE(${period_4_end})
