@@ -159,7 +159,7 @@ explore: flexible_pop {
     # The DATEDIFF unit is in days, so if we want hours we have to multiply it by 24
     # (It might be possible to make this more efficient with a more granular function like TIMESTAMPDIFF where you can specify the interval units)
     sql_on: ${within_periods.n}
-                <= (DATEDIFF( {% parameter pop.within_period_type %},{% date_start pop.date_filter %},{% date_end pop.date_filter %} ) - 1 )
+                <= (DATE_DIFF({% date_end pop.date_filter %}, {% date_start pop.date_filter %}, {% parameter pop.within_period_type %}) - 1 )
                  * CASE WHEN {%parameter pop.within_period_type %} = 'hour' THEN 24 ELSE 1 END;;
   }
   # No editing needed
