@@ -32,6 +32,28 @@ view: order_items_test_manu {
     # Agrega el resto de los meses...
   }
 
+  parameter: select_timeframe_advanced {
+    type: string
+    allowed_value: { label: "Día" value: "day" }
+    allowed_value: { label: "Semana" value: "week" }
+    allowed_value: { label: "Mes" value: "month" }
+    allowed_value: { label: "Año hasta la fecha (YTD)" value: "ytd" }
+    default_value: "month"
+  }
+
+  parameter: select_reference_date {
+    type: date
+    description: "Fecha de referencia para analizar periodos pasados"
+  }
+
+  parameter: select_comparison {
+    type: string
+    allowed_value: { label: "Periodo anterior" value: "previous_period" }
+    allowed_value: { label: "Mismo periodo año anterior" value: "previous_year" }
+    default_value: "previous_period"
+  }
+
+
   parameter: filter_type {
     type: string
     allowed_value: {
@@ -125,6 +147,17 @@ view: order_items_test_manu {
     type: date
   }
 
+  dimension: is_current_period {
+    type: yesno
+    sql: ${created_date} BETWEEN ${current_period_start} AND ${current_period_end} ;;
+  }
+
+  dimension: is_comparison_period {
+    type: yesno
+    sql: ${created_date} BETWEEN ${comparison_period_start} AND ${comparison_period_end} ;;
+  }
+
+
   dimension_group: filter_start_date_1 {
     type: time
     timeframes: [raw,date]
@@ -147,6 +180,55 @@ view: order_items_test_manu {
     type: yesno
     sql: ${created_date} = ${filter_start_date_2_date} ;;
   }
+
+  dimension_group: reference_date {
+    type: time
+    timeframes: [raw, date, week, month, year]
+    sql: {% parameter select_reference_date %} ;;
+  }
+
+  dimension: current_period_start {
+    type: date
+    sql:
+      CASE {% parameter select_timeframe_advanced %}
+        WHEN 'day' THEN {% parameter select_reference_date %}
+        WHEN 'week' THEN DATE_TRUNC({% parameter select_reference_date %}, WEEK)
+        WHEN 'month' THEN DATE_TRUNC({% parameter select_reference_date %}, MONTH)
+        WHEN 'ytd' THEN DATE(CONCAT(EXTRACT(YEAR FROM {% parameter select_reference_date %}), '-01-01'))
+      END ;;
+  }
+
+  dimension: current_period_end {
+    type: date
+    sql: {% parameter select_reference_date %} ;;
+  }
+
+  dimension: comparison_period_start {
+    type: date
+    sql:
+      CASE {% parameter select_comparison %}
+        WHEN 'previous_period' THEN
+          CASE {% parameter select_timeframe_advanced %}
+            WHEN 'day' THEN DATE_SUB({% parameter select_reference_date %}, INTERVAL 1 DAY)
+            WHEN 'week' THEN DATE_SUB({% parameter select_reference_date %}, INTERVAL 1 WEEK)
+            WHEN 'month' THEN DATE_SUB({% parameter select_reference_date %}, INTERVAL 1 MONTH)
+            WHEN 'ytd' THEN DATE_SUB(DATE(CONCAT(EXTRACT(YEAR FROM {% parameter select_reference_date %}), '-01-01')), INTERVAL 1 YEAR)
+          END
+        WHEN 'previous_year' THEN
+          CASE {% parameter select_timeframe_advanced %}
+            WHEN 'day' THEN DATE_SUB({% parameter select_reference_date %}, INTERVAL 1 YEAR)
+            WHEN 'week' THEN DATE_SUB({% parameter select_reference_date %}, INTERVAL 1 YEAR)
+            WHEN 'month' THEN DATE_SUB({% parameter select_reference_date %}, INTERVAL 1 YEAR)
+            WHEN 'ytd' THEN DATE_SUB(DATE(CONCAT(EXTRACT(YEAR FROM {% parameter select_reference_date %}), '-01-01')), INTERVAL 1 YEAR)
+          END
+      END ;;
+  }
+
+  dimension: comparison_period_end {
+    type: date
+    sql: DATE_SUB({% parameter select_reference_date %}, INTERVAL 1 YEAR) ;;
+  }
+
 
   measure: total_sales_1 {
 
@@ -353,6 +435,33 @@ view: order_items_test_manu {
     filters: [status: "Complete"]
     value_format_name: usd
   }
+
+  measure: total_sales_current {
+    type: sum
+    sql: ${sale_price} ;;
+    filters: { field: is_current_period value: "yes" }
+    value_format_name: usd_0
+  }
+
+  measure: total_sales_comparison {
+    type: sum
+    sql: ${sale_price} ;;
+    filters: { field: is_comparison_period value: "yes" }
+    value_format_name: usd_0
+  }
+
+  measure: total_sales_variation {
+    type: number
+    sql: ${total_sales_current} - ${total_sales_comparison} ;;
+    value_format_name: usd_0
+  }
+
+  measure: total_sales_variation_percentage {
+    type: number
+    sql: SAFE_DIVIDE(${total_sales_variation}, ${total_sales_comparison}) ;;
+    value_format_name: percent_2
+  }
+
 
   parameter: fecha {
     type: date
