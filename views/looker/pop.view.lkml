@@ -23,11 +23,11 @@ view: pop {
     hidden: yes
     type: string
     case: {
-      when: { sql: {% parameter pop.within_period_type %} = 'quarter' ;; label: "Quarter" }
-      when: { sql: {% parameter pop.within_period_type %} = 'month' ;; label: "Month" }
-      when: { sql: {% parameter pop.within_period_type %} = 'week' ;; label: "Week" }
-      when: { sql: {% parameter pop.within_period_type %} = 'day' ;; label: "Day" }
-      when: { sql: {% parameter pop.within_period_type %} = 'hour' ;; label: "Hour" }
+      when: { sql: {% parameter pop.within_period_type %} = 'quarter' ;; label: "quarter" }
+      when: { sql: {% parameter pop.within_period_type %} = 'month' ;; label: "month" }
+      when: { sql: {% parameter pop.within_period_type %} = 'week' ;; label: "week" }
+      when: { sql: {% parameter pop.within_period_type %} = 'day' ;; label: "day" }
+      when: { sql: {% parameter pop.within_period_type %} = 'hour' ;; label: "hour" }
     }
   }
 
@@ -36,11 +36,11 @@ view: pop {
     hidden: yes
     type: string
     case: {
-      when: { sql: {% parameter pop.over_period_type %} = 'year' ;; label: "Year" }
-      when: { sql: {% parameter pop.over_period_type %} = 'quarter' ;; label: "Quarter" }
-      when: { sql: {% parameter pop.over_period_type %} = 'month' ;; label: "Month" }
-      when: { sql: {% parameter pop.over_period_type %} = 'week' ;; label: "Week" }
-      when: { sql: {% parameter pop.over_period_type %} = 'day' ;; label: "Day" }
+      when: { sql: {% parameter pop.over_period_type %} = 'year' ;; label: "year" }
+      when: { sql: {% parameter pop.over_period_type %} = 'quarter' ;; label: "quarter" }
+      when: { sql: {% parameter pop.over_period_type %} = 'month' ;; label: "month" }
+      when: { sql: {% parameter pop.over_period_type %} = 'week' ;; label: "week" }
+      when: { sql: {% parameter pop.over_period_type %} = 'day' ;; label: "day" }
     }
   }
 
