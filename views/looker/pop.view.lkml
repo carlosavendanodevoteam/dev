@@ -48,7 +48,10 @@ view: pop {
 
   dimension: reference_date {
     hidden: yes
-    sql: DATE_TRUNC(DATE_ADD({% date_end pop.date_filter %}, INTERVAL -(${within_periods.n} + 1) {% parameter pop.within_period_type %}), {% parameter pop.within_period_type %}) ;;
+    sql: DATE_TRUNC(
+      DATE_ADD({% date_end pop.date_filter %}, INTERVAL -(${within_periods.n} + 1) {% parameter pop.within_period_type %}),
+      {% parameter pop.within_period_type %}
+    ) ;;
   }
 
   dimension: reference_date_formatted {
