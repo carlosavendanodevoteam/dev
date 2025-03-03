@@ -182,10 +182,8 @@ explore: flexible_pop {
     relationship: many_to_one
     # Apply join name below in sql_on
     sql_on: pop_order_items_created.join_date = DATE_TRUNC({% parameter pop.within_period_type %},
-                          DATE_ADD({% date_end pop.date_filter %}, INTERVAL 0 - ${over_periods.n} {% parameter pop.over_period_type %}),
-                              DATE_ADD({% date_end pop.date_filter %}, INTERVAL 0 - ${within_periods.n} {% parameter pop.within_period_type %})
-                          )
-                      );;
+      DATE_ADD({% date_end pop.date_filter %}, INTERVAL 0 - ${over_periods.n} {% parameter pop.over_period_type %}),
+      DATE_ADD({% date_end pop.date_filter %}, INTERVAL 0 - ${within_periods.n} {% parameter pop.within_period_type %})
+    );;
   }
-
 }

@@ -54,6 +54,7 @@ view: pop {
     ) ;;
   }
 
+
   dimension: reference_date_formatted {
     type: string
     order_by_field: reference_date
