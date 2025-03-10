@@ -62,12 +62,12 @@ view: pop {
     sql: TO_CHAR(
       ${reference_date},
       CASE
-        WHEN {% parameter pop.within_period_type %} = 'year' THEN 'YYYY'
-        WHEN {% parameter pop.within_period_type %} = 'month' THEN 'MON YY'
-        WHEN {% parameter pop.within_period_type %} = 'quarter' THEN 'YYYY"Q"Q'
-        WHEN {% parameter pop.within_period_type %} = 'week' THEN 'MM/DD/YY'
-        WHEN {% parameter pop.within_period_type %} = 'day' THEN 'MM/DD/YY'
-        WHEN {% parameter pop.within_period_type %} = 'hour' THEN 'MM/DD HH24:MI'
+        WHEN {% parameter pop.within_period_type %} = year THEN 'YYYY'
+        WHEN {% parameter pop.within_period_type %} = month THEN 'MON YY'
+        WHEN {% parameter pop.within_period_type %} = quarter THEN 'YYYY"Q"Q'
+        WHEN {% parameter pop.within_period_type %} = week THEN 'MM/DD/YY'
+        WHEN {% parameter pop.within_period_type %} = day THEN 'MM/DD/YY'
+        WHEN {% parameter pop.within_period_type %} = hour THEN 'MM/DD HH24:MI'
         ELSE 'MM/DD/YY'
       END
     ) ;;
