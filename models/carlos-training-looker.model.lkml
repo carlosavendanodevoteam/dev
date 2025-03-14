@@ -142,3 +142,54 @@ explore: pop_parameters_multi_period {
             {% else %} 1 = 1
             {% endif %};;
 }
+
+explore: flexible_pop {
+  label: "PoP Method 8: Flexible implementation to compare any period to any other"
+  from: pop
+  view_name: pop
+
+  # No editing needed - make sure we always join and set up always filter on the hidden config dimensions
+  always_join: [within_periods, over_periods]
+  always_filter: {
+    filters: [pop.date_filter: "last 12 weeks", pop.within_period_type: "week", pop.over_period_type: "year"]
+  }
+
+  # No editing needed
+  join: within_periods {
+    from: numbers
+    type: left_outer
+    relationship: one_to_many
+    fields: []
+    # This join creates fanout, creating one additional row per required period
+    # Here we calculate the size of the current period, in the units selected by the filter
+    sql_on: ${within_periods.n}
+                <= (DATE_DIFF({% date_end pop.date_filter %}, {% date_start pop.date_filter %}, {% parameter pop.within_period_type %}) - 1)
+                 * CASE WHEN {% parameter pop.within_period_type %} = 'hour' THEN 24 ELSE 1 END;;
+  }
+
+  # No editing needed
+  join: over_periods {
+    from: numbers
+    view_label: "_PoP"
+    type: left_outer
+    relationship: one_to_many
+    sql_on:
+                      CASE WHEN {% condition pop.over_how_many_past_periods %} NULL {% endcondition %}
+                      THEN
+                        ${over_periods.n} <= 1
+                      ELSE
+                        {% condition pop.over_how_many_past_periods %} ${over_periods.n} {% endcondition %}
+                      END;;
+  }
+
+  # Rename (& optionally repeat) below join to match your pop view(s)
+  join: pop_order_items_created {
+    type: left_outer
+    relationship: many_to_one
+    # Apply join name below in sql_on
+    sql_on: pop_order_items_created.join_date = DATE_TRUNC({% parameter pop.within_period_type %},
+      DATE_ADD({% date_end pop.date_filter %}, INTERVAL 0 - ${over_periods.n} {% parameter pop.over_period_type %}),
+      DATE_ADD({% date_end pop.date_filter %}, INTERVAL 0 - ${within_periods.n} {% parameter pop.within_period_type %})
+    );;
+  }
+}
