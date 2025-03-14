@@ -29,6 +29,7 @@ dimension: longitude {
 }
 
 dimension: name {
+  required_access_grants: [access_test_rsi]
   type: string
   sql: ${TABLE}.name ;;
 }

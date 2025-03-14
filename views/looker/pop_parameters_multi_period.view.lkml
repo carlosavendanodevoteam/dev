@@ -1,7 +1,7 @@
 # The name of this view in Looker is "Order Items"
 
 
-view: order_items {
+view: pop_parameters_multi_period {
   # The sql_table_name parameter indicates the underlying database table
   # to be used for all fields in this view.
   sql_table_name: `looker.order_items_extended` ;;
@@ -147,37 +147,37 @@ view: order_items {
   }
 
   dimension: days_in_period {
-    hidden:  yes
+    hidden: yes
     view_label: "_PoP"
     description: "Gives the number of days in the current period date range"
     type: number
-    sql: DATEDIFF(DAY, DATE({% date_start current_date_range %}), DATE({% date_end current_date_range %})) ;;
+    sql: DATE_DIFF(DATE({% date_end current_date_range %}), DATE({% date_start current_date_range %}), DAY) ;;
   }
 
   dimension: period_2_start {
-    hidden:  yes
+    hidden: yes
     view_label: "_PoP"
     description: "Calculates the start of the previous period"
     type: date
     sql:
-            {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -${days_in_period}, DATE({% date_start current_date_range %}))
-            {% else %}
-            DATEADD({% parameter compare_to %}, -1, DATE({% date_start current_date_range %}))
-            {% endif %};;
+        {% if compare_to._parameter_value == "Period" %}
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -${days_in_period} DAY)
+        {% else %}
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -1 {% parameter compare_to %})
+        {% endif %};;
   }
 
   dimension: period_2_end {
-    hidden:  yes
+    hidden: yes
     view_label: "_PoP"
     description: "Calculates the end of the previous period"
     type: date
     sql:
-            {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -1, DATE({% date_start current_date_range %}))
-            {% else %}
-            DATEADD({% parameter compare_to %}, -1, DATEADD(DAY, -1, DATE({% date_end current_date_range %})))
-            {% endif %};;
+        {% if compare_to._parameter_value == "Period" %}
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -1 DAY)
+        {% else %}
+        DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -1 {% parameter compare_to %})
+        {% endif %};;
   }
 
   dimension: period_3_start {
@@ -186,12 +186,11 @@ view: order_items {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -(2 * ${days_in_period}), DATE({% date_start current_date_range %}))
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -(2 * ${days_in_period}) DAY)
         {% else %}
-            DATEADD({% parameter compare_to %}, -2, DATE({% date_start current_date_range %}))
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -2 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
-
   }
 
   dimension: period_3_end {
@@ -200,9 +199,9 @@ view: order_items {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -1, ${period_2_start})
+        DATE_ADD(${period_2_start}, INTERVAL -1 DAY)
         {% else %}
-            DATEADD({% parameter compare_to %}, -2, DATEADD(DAY, -1, DATE({% date_end current_date_range %})))
+        DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -2 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -213,9 +212,9 @@ view: order_items {
     type: date
     sql:
         {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -(3 * ${days_in_period}), DATE({% date_start current_date_range %}))
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -(3 * ${days_in_period}) DAY)
         {% else %}
-            DATEADD({% parameter compare_to %}, -3, DATE({% date_start current_date_range %}))
+        DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL -3 {% parameter compare_to %})
         {% endif %};;
     hidden: yes
   }
@@ -225,12 +224,32 @@ view: order_items {
     description: "Calculates the end of 4 periods ago"
     type: date
     sql:
-            {% if compare_to._parameter_value == "Period" %}
-            DATEADD(DAY, -1, ${period_2_start})
-            {% else %}
-            DATEADD({% parameter compare_to %}, -3, DATEADD(DAY, -1, DATE({% date_end current_date_range %})))
-            {% endif %};;
+        {% if compare_to._parameter_value == "Period" %}
+        DATE_ADD(${period_2_start}, INTERVAL -1 DAY)
+        {% else %}
+        DATE_ADD(DATE_ADD(DATE({% date_end current_date_range %}), INTERVAL -1 DAY), INTERVAL -3 {% parameter compare_to %})
+        {% endif %};;
     hidden: yes
+  }
+
+  dimension_group: date_in_period {
+    description: "Use this as your grouping dimension when comparing periods. Aligns the previous periods onto the current period"
+    label: "Current Period"
+    type: time
+    sql: DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL ${day_in_period} - 1 DAY);;
+    view_label: "_PoP"
+    timeframes: [
+      date,
+      hour_of_day,
+      day_of_week,
+      day_of_week_index,
+      day_of_month,
+      day_of_year,
+      week_of_year,
+      month,
+      month_name,
+      month_num,
+      year]
   }
 
 
@@ -241,24 +260,22 @@ view: order_items {
     type: string
     order_by_field: order_for_period
     sql:
-            {% if current_date_range._is_filtered %}
-                CASE
-                WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
-                THEN 'This {% parameter compare_to %}'
-                WHEN ${created_date} between ${period_2_start} and ${period_2_end}
-                THEN 'Last {% parameter compare_to %}'
-                WHEN ${created_date} between ${period_3_start} and ${period_3_end}
-                THEN '2 {% parameter compare_to %}s Ago'
-                WHEN ${created_date} between ${period_4_start} and ${period_4_end}
-                THEN '3 {% parameter compare_to %}s Ago'
-                END
-            {% else %}
-                NULL
-            {% endif %}
-            ;;
+    {% if current_date_range._is_filtered %}
+      CASE
+        WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
+        THEN 'This {% parameter compare_to %}'
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_2_start}) AND DATE(${period_2_end})
+        THEN 'Last {% parameter compare_to %}'
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_3_start}) AND DATE(${period_3_end})
+        THEN '2 {% parameter compare_to %}s Ago'
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_4_start}) AND DATE(${period_4_end})
+        THEN '3 {% parameter compare_to %}s Ago'
+      END
+    {% else %}
+      NULL
+    {% endif %}
+  ;;
   }
-
-
 
   dimension: order_for_period {
     hidden: yes
@@ -266,48 +283,44 @@ view: order_items {
     label: "Period"
     type: string
     sql:
-            {% if current_date_range._is_filtered %}
-                CASE
-                WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
-                THEN 1
-                WHEN ${created_date} between ${period_2_start} and ${period_2_end}
-                THEN 2
-                WHEN ${created_date} between ${period_3_start} and ${period_3_end}
-                THEN 3
-                WHEN ${created_date} between ${period_4_start} and ${period_4_end}
-                THEN 4
-                END
-            {% else %}
-                NULL
-            {% endif %}
-            ;;
+    {% if current_date_range._is_filtered %}
+      CASE
+        WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
+        THEN 1
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_2_start}) AND DATE(${period_2_end})
+        THEN 2
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_3_start}) AND DATE(${period_3_end})
+        THEN 3
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_4_start}) AND DATE(${period_4_end})
+        THEN 4
+      END
+    {% else %}
+      NULL
+    {% endif %}
+  ;;
   }
 
   dimension: day_in_period {
-    description: "Gives the number of days since the start of each periods. Use this to align the event dates onto the same axis, the axes will read 1,2,3, etc."
+    description: "Gives the number of days since the start of each period. Use this to align the event dates onto the same axis, the axes will read 1,2,3, etc."
     type: number
     sql:
-        {% if current_date_range._is_filtered %}
-            CASE
-            WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
-            THEN DATEDIFF(DAY, DATE({% date_start current_date_range %}), ${created_date}) + 1
-
-      WHEN ${created_date} between ${period_2_start} and ${period_2_end}
-      THEN DATEDIFF(DAY, ${period_2_start}, ${created_date}) + 1
-
-      WHEN ${created_date} between ${period_3_start} and ${period_3_end}
-      THEN DATEDIFF(DAY, ${period_3_start}, ${created_date}) + 1
-
-      WHEN ${created_date} between ${period_4_start} and ${period_4_end}
-      THEN DATEDIFF(DAY, ${period_4_start}, ${created_date}) + 1
+    {% if current_date_range._is_filtered %}
+      CASE
+        WHEN {% condition current_date_range %} ${created_raw} {% endcondition %}
+        THEN DATE_DIFF(DATE(${created_date}), DATE({% date_start current_date_range %}), DAY) + 1
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_2_start}) AND DATE(${period_2_end})
+        THEN DATE_DIFF(DATE(${created_date}), DATE(${period_2_start}), DAY) + 1
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_3_start}) AND DATE(${period_3_end})
+        THEN DATE_DIFF(DATE(${created_date}), DATE(${period_3_start}), DAY) + 1
+        WHEN DATE(${created_date}) BETWEEN DATE(${period_4_start}) AND DATE(${period_4_end})
+        THEN DATE_DIFF(DATE(${created_date}), DATE(${period_4_start}), DAY) + 1
       END
-
-      {% else %} NULL
-      {% endif %}
-      ;;
+    {% else %}
+      NULL
+    {% endif %}
+  ;;
     hidden: yes
   }
-
 
 
 
@@ -353,26 +366,26 @@ view: order_items {
 
 
 
- dimension: in_selected_range {
-  type: yesno
-  sql: DATE(${created_date}) BETWEEN DATE_TRUNC(CAST({% parameter selected_date %} AS DATE), YEAR)
-    AND CAST({% parameter selected_date %} AS DATE) ;;
-}
+  dimension: in_selected_range {
+    type: yesno
+    sql: DATE(${created_date}) BETWEEN DATE_TRUNC(CAST({% parameter selected_date %} AS DATE), YEAR)
+      AND CAST({% parameter selected_date %} AS DATE) ;;
+  }
 
-dimension: in_last_n_years {
-  type: yesno
-  sql: EXTRACT(YEAR FROM ${created_date}) BETWEEN EXTRACT(YEAR FROM CAST({% parameter selected_date %} AS DATE)) - ({% parameter num_years %} - 1)
-    AND EXTRACT(YEAR FROM CAST({% parameter selected_date %} AS DATE)) ;;
-}
+  dimension: in_last_n_years {
+    type: yesno
+    sql: EXTRACT(YEAR FROM ${created_date}) BETWEEN EXTRACT(YEAR FROM CAST({% parameter selected_date %} AS DATE)) - ({% parameter num_years %} - 1)
+      AND EXTRACT(YEAR FROM CAST({% parameter selected_date %} AS DATE)) ;;
+  }
 
-measure: total_sales_filtered {
-  type: sum
-  sql: CASE
+  measure: total_sales_filtered {
+    type: sum
+    sql: CASE
          WHEN ${in_selected_range} AND ${in_last_n_years} THEN ${sale_price}
          ELSE 0
        END ;;
-  value_format_name: usd_0
-}
+    value_format_name: usd_0
+  }
 
 
 
@@ -459,7 +472,7 @@ measure: total_sales_filtered {
 
   dimension: dynamic_fecha {
     sql:
-concat("fecha elegida ",CAST({% date_start date_filter_1 %} AS DATE));;
+    concat("fecha elegida ",CAST({% date_start date_filter_1 %} AS DATE));;
   }
 
   dimension: dynamic_fecha_2 {
@@ -471,7 +484,6 @@ concat("fecha elegida ",CAST({% date_start date_filter_1 %} AS DATE));;
     sql:
     concat("comparacion entre ",CAST({% date_start date_filter_1 %} AS DATE)," y ",CAST({% date_start date_filter_2 %} AS DATE));;
   }
-
 
   dimension: dynamic_date_1 {
     sql:  ${filter_start_date_1_date};;
@@ -560,16 +572,16 @@ concat("fecha elegida ",CAST({% date_start date_filter_1 %} AS DATE));;
 
   }
 
-dimension: order_item_id {
-  primary_key: yes
-  # No primary ke
-  type: number
-  sql: ${TABLE}.id ;;
-}
+  dimension: order_item_id {
+    primary_key: yes
+    # No primary ke
+    type: number
+    sql: ${TABLE}.id ;;
+  }
 
-dimension_group: created {
-  type: time
-  timeframes: [
+  dimension_group: created {
+    type: time
+    timeframes: [
       raw,
       time,
       hour_of_day,
@@ -585,85 +597,60 @@ dimension_group: created {
       month_num,
       quarter,
       year
-  ]
-  sql: ${TABLE}.created_at ;;
-}
+    ]
+    sql: ${TABLE}.created_at ;;
+  }
 
 
-dimension_group: delivered {
-  type: time
-  timeframes: [
-    raw,
-    date,
-    week,
-    month,
-    quarter,
-    year
-  ]
-  convert_tz: no
-  datatype: date
-  sql: ${TABLE}.delivered_at ;;
-}
+  dimension_group: delivered {
+    type: time
+    timeframes: [
+      raw,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.delivered_at ;;
+  }
 
-dimension: inventory_item_id {
-  type: number
-  # hidden: yes
-  sql: ${TABLE}.inventory_item_id ;;
-}
-
-dimension: order_id {
-  required_access_grants: [access_test_rsi]
-  type: number
-  sql: ${TABLE}.order_id ;;
-}
-
-dimension_group: returned {
-  type: time
-  timeframes: [
-    raw,
-    time,
-    date,
-    week,
-    month,
-    quarter,
-    year
-  ]
-  sql: ${TABLE}.returned_at ;;
-}
-
-
-dimension: sale_price {
-  type: number
-  sql: ${TABLE}.sale_price ;;
-}
-
-
-  measure: percent_revenue_email_source {
-
+  dimension: inventory_item_id {
     type: number
+    # hidden: yes
+    sql: ${TABLE}.inventory_item_id ;;
+  }
 
-    value_format_name: percent_2
+  dimension: order_id {
+    required_access_grants: [access_test_rsi]
+    type: number
+    sql: ${TABLE}.order_id ;;
+  }
 
-    sql: 1.0*${total_revenue_email_users}
+  dimension_group: returned {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}.returned_at ;;
+  }
 
-        /NULLIF(${total_revenue}, 0) ;;
 
+  dimension: sale_price {
+    type: number
+    sql: ${TABLE}.sale_price ;;
   }
 
 
 
-
-  measure: total_revenue_email_users {
-
-    type: sum
-
-    sql: ${sale_price} ;;
-
-    filters: [users.is_email_source: "Yes"]
-
-    value_format_name: usd
-
-  }
 
 
 
@@ -680,74 +667,62 @@ dimension: sale_price {
 
 
 
-dimension_group: shipped {
-  type: time
-  timeframes: [
-    raw,
-    date,
-    week,
-    month,
-    quarter,
-    year
-  ]
-  convert_tz: no
-  datatype: date
-  sql: ${TABLE}.shipped_at ;;
-}
+  dimension_group: shipped {
+    type: time
+    timeframes: [
+      raw,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.shipped_at ;;
+  }
 
-dimension: status {
-  type: string
-  sql: ${TABLE}.status ;;
-}
+  dimension: status {
+    type: string
+    sql: ${TABLE}.status ;;
+  }
 
-dimension: user_id {
-  type: number
-  # hidden: yes
-  sql: ${TABLE}.user_id ;;
-}
+  dimension: user_id {
+    type: number
+    # hidden: yes
+    sql: ${TABLE}.user_id ;;
+  }
 
-measure: order_item_count {
-  type: count
-  drill_fields: [detail*]
-}
+  measure: order_item_count {
+    type: count
+    drill_fields: [detail*]
+  }
 
-measure: order_count {
-  type: count_distinct
-  sql: ${order_id} ;;
-}
+  measure: order_count {
+    type: count_distinct
+    sql: ${order_id} ;;
+  }
 
-measure: total_revenue {
-  type: sum
-  sql: ${sale_price} ;;
-  value_format_name: usd
-}
+  measure: total_revenue {
+    type: sum
+    sql: ${sale_price} ;;
+    value_format_name: usd
+  }
 
-measure: total_revenue_from_completed_orders {
-  type: sum
-  sql: ${sale_price} ;;
-  filters: [status: "Complete"]
-  value_format_name: usd
-}
+  measure: total_revenue_from_completed_orders {
+    type: sum
+    sql: ${sale_price} ;;
+    filters: [status: "Complete"]
+    value_format_name: usd
+  }
 
-parameter: fecha {
-  type: date
-}
-
-dimension: year_to_date {
-  type:  yesno
-  sql: DATE(${created_date}) BETWEEN DATE(CONCAT(EXTRACT(YEAR FROM {%parameter fecha%}), '-01-01')) AND DATE({%parameter fecha%})  ;;
-}
 
 
 # ----- Sets of fields for drilling ------
-set: detail {
-  fields: [
-    order_item_id,
-    users.last_name,
-    users.id,
-    users.first_name,
-    inventory_items.id,
-    inventory_items.product_name
-  ]
-}
+  set: detail {
+    fields: [
+      order_item_id,
+
+    ]
+  }
 }

@@ -13,6 +13,11 @@ datagroup: carlos_training_looker_default_datagroup {
   sql_trigger: SELECT max(id) FROM my_tablename ;;
 }
 
+access_grant: access_test_rsi {
+  user_attribute: test_rsi
+  allowed_values: [ "yes" ]
+}
+
 persist_with: carlos_training_looker_default_datagroup
 
 map_layer: test_map {
@@ -33,6 +38,7 @@ map_layer: test_map {
 explore: inventory_items {
 }
 
+explore: vista_sql_runner {}
 
 explore: products {}
 
@@ -53,11 +59,26 @@ explore: test_map {}
 
 explore: order_items {
 
-  join: user_order_summary {
-    type: left_outer
-    sql_on: ${order_items.user_id} = ${user_order_summary.user_id};;
-    relationship: many_to_one
-  }
+
+
+  # access_filter: {
+  #  field: status
+  #  user_attribute: status_filter
+  #}
+
+
+
+#sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
+
+#always_filter:
+#{
+#filters: [distribution_centers.name: "Houston TX"]
+ #}
+
+
+
+
+
 
   join: users {
     type: left_outer
@@ -87,15 +108,7 @@ explore: order_items {
     sql_on: ${order_items.order_id} = ${order_details.order_id};;
     relationship: many_to_one
   }
-  join: siglo {
 
-    type: left_outer
-
-    sql_on: ${order_items.user_id} = ${siglo.user_id};;
-
-    relationship: many_to_one
-
-  }
 
 
 
@@ -104,7 +117,7 @@ explore: order_items {
 explore: test_region {}
 
 
-explore: flexible_pop {
+explore: flexible_pop8 {
   label: "PoP Method 8: Flexible implementation to compare any period to any other"
   from:  pop_method_8
   view_name: pop_method_8
@@ -227,7 +240,76 @@ join: within_periods {
     END
     = DATE(pop_order_items_method_8.join_date) ;;
   }
+}
 
+explore: pop_parameters_multi_period {
+  label: "PoP Method 4: Compare multiple templated periods"
 
+  sql_always_where:
+            {% if pop_parameters_multi_period.current_date_range._is_filtered %} {% condition pop_parameters_multi_period.current_date_range %} ${created_raw} {% endcondition %}
+            {% if pop_parameters_multi_period.previous_date_range._is_filtered or pop_parameters_multi_period.compare_to._in_query %}
+            {% if pop_parameters_multi_period.comparison_periods._parameter_value == "2" %}
+                or DATE(${created_raw}) between  DATE(${period_2_start}) and  DATE(${period_2_end})
+{% elsif pop_parameters_multi_period.comparison_periods._parameter_value == "3" %}
+    or DATE(${created_raw}) BETWEEN DATE(${period_2_start}) AND DATE(${period_2_end})
+    or DATE(${created_raw}) BETWEEN DATE(${period_3_start}) AND DATE(${period_3_end})
+            {% elsif pop_parameters_multi_period.comparison_periods._parameter_value == "4" %}
+                or  DATE(${created_raw}) between  DATE(${period_2_start}) and  DATE(${period_2_end})
+                or  DATE(${created_raw}) between  DATE(${period_3_start})and  DATE(${period_3_end}) or  DATE(${created_raw}) between  DATE(${period_4_start}) and  DATE(${period_4_end})
+            {% else %} 1 = 1
+            {% endif %}
+            {% endif %}
+            {% else %} 1 = 1
+            {% endif %};;
+}
 
+explore: flexible_pop {
+  label: "PoP Method 8: Flexible implementation to compare any period to any other"
+  from: pop
+  view_name: pop
+
+  # No editing needed - make sure we always join and set up always filter on the hidden config dimensions
+  always_join: [within_periods, over_periods]
+  always_filter: {
+    filters: [pop.date_filter: "last 12 weeks", pop.within_period_type: "week", pop.over_period_type: "year"]
+  }
+
+  # No editing needed
+  join: within_periods {
+    from: numbers
+    type: left_outer
+    relationship: one_to_many
+    fields: []
+    # This join creates fanout, creating one additional row per required period
+    # Here we calculate the size of the current period, in the units selected by the filter
+    sql_on: ${within_periods.n}
+                <= (DATE_DIFF({% date_end pop.date_filter %}, {% date_start pop.date_filter %}, {% parameter pop.within_period_type %}) - 1)
+                 * CASE WHEN {% parameter pop.within_period_type %} = 'hour' THEN 24 ELSE 1 END;;
+  }
+
+  # No editing needed
+  join: over_periods {
+    from: numbers
+    view_label: "_PoP"
+    type: left_outer
+    relationship: one_to_many
+    sql_on:
+                      CASE WHEN {% condition pop.over_how_many_past_periods %} NULL {% endcondition %}
+                      THEN
+                        ${over_periods.n} <= 1
+                      ELSE
+                        {% condition pop.over_how_many_past_periods %} ${over_periods.n} {% endcondition %}
+                      END;;
+  }
+
+  # Rename (& optionally repeat) below join to match your pop view(s)
+  join: pop_order_items_created {
+    type: left_outer
+    relationship: many_to_one
+    # Apply join name below in sql_on
+    sql_on: pop_order_items_created.join_date = DATE_TRUNC({% parameter pop.within_period_type %},
+      DATE_ADD({% date_end pop.date_filter %}, INTERVAL 0 - ${over_periods.n} {% parameter pop.over_period_type %}),
+      DATE_ADD({% date_end pop.date_filter %}, INTERVAL 0 - ${within_periods.n} {% parameter pop.within_period_type %})
+    );;
+  }
 }
