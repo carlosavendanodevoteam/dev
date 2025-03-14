@@ -472,6 +472,7 @@ concat("fecha elegida ",CAST({% date_start date_filter_1 %} AS DATE));;
     concat("comparacion entre ",CAST({% date_start date_filter_1 %} AS DATE)," y ",CAST({% date_start date_filter_2 %} AS DATE));;
   }
 
+
   dimension: dynamic_date_1 {
     sql:  ${filter_start_date_1_date};;
     html:{{ rendered_value | date: "Fecha elegida 1: %Y-%m-%d"}};;

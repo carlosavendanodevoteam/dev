@@ -14,7 +14,7 @@ datagroup: carlos_training_looker_default_datagroup {
 }
 
 access_grant: access_test_rsi {
-  user_attribute: test_rsi
+  user_attribute: test_grant
   allowed_values: [ "yes" ]
 }
 
@@ -43,7 +43,13 @@ explore: vista_sql_runner {}
 explore: products {}
 
 explore: distribution_centers {}
-
+explore: order_items_test_manu {
+  join: users {
+    type: left_outer
+    sql_on: ${order_items_test_manu.user_id} = ${users.id} ;;
+    relationship: many_to_one
+  }
+}
 explore: orders {}
 
 explore: events {}
@@ -65,7 +71,6 @@ explore: order_items {
   #  field: status
   #  user_attribute: status_filter
   #}
-
 
 
 #sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
@@ -115,6 +120,134 @@ explore: order_items {
 }
 
 explore: test_region {}
+
+
+explore: flexible_pop8 {
+  label: "LPoP Method 8: Flexible implementation to compare any period to any other"
+  from:  pop_method_8
+  view_name: pop_method_8
+
+  # No editing needed - make sure we always join and set up always filter on the hidden config dimensions
+  always_join: [within_periods,over_periods]
+
+  always_filter: {
+    filters: [date_filter:  "last 12 weeks", within_period_type: "week", over_period_type: "year"]
+  }
+
+  # No editing needed
+join: within_periods {
+  from: numbers_method8
+  type: left_outer
+  relationship: one_to_many
+  fields: []
+  sql_on: ${within_periods.n} <= (
+    CASE
+      WHEN {% parameter pop_method_8.within_period_type %} = 'hour' THEN
+        (TIMESTAMP_DIFF(
+          TIMESTAMP({% date_end pop_method_8.date_filter %}),
+          TIMESTAMP({% date_start pop_method_8.date_filter %}),
+          HOUR
+        ) - 1)  * 24
+      WHEN {% parameter pop_method_8.within_period_type %} = 'day' THEN
+        (DATE_DIFF(
+          DATE(TIMESTAMP({% date_end pop_method_8.date_filter %})),
+          DATE(TIMESTAMP({% date_start pop_method_8.date_filter %})),
+          DAY
+        ) - 1)
+      WHEN {% parameter pop_method_8.within_period_type %} = 'week' THEN
+        (DATE_DIFF(
+          DATE(TIMESTAMP({% date_end pop_method_8.date_filter %})),
+          DATE(TIMESTAMP({% date_start pop_method_8.date_filter %})),
+          WEEK
+        ) - 1)
+      WHEN {% parameter pop_method_8.within_period_type %} = 'month' THEN
+        (DATE_DIFF(
+          DATE(TIMESTAMP({% date_end pop_method_8.date_filter %})),
+          DATE(TIMESTAMP({% date_start pop_method_8.date_filter %})),
+          MONTH
+        ) - 1)
+      WHEN {% parameter pop_method_8.within_period_type %} = 'quarter' THEN
+        (DATE_DIFF(
+          DATE(TIMESTAMP({% date_end pop_method_8.date_filter %})),
+          DATE(TIMESTAMP({% date_start pop_method_8.date_filter %})),
+          QUARTER
+        ) - 1)
+      ELSE
+        (DATE_DIFF(
+          DATE(TIMESTAMP({% date_end pop_method_8.date_filter %})),
+          DATE(TIMESTAMP({% date_start pop_method_8.date_filter %})),
+          DAY
+        ) - 1)
+    END
+  );;
+}
+
+
+
+
+
+  # No editing needed
+  join: over_periods {
+    from: numbers_method8
+    view_label: "_PoP"
+    type: left_outer
+    relationship: one_to_many
+    sql_on:
+      CASE WHEN {% condition pop_method_8.over_how_many_past_periods %} NULL {% endcondition %}
+      THEN
+        ${over_periods.n} <= 1
+      ELSE
+        {% condition pop_method_8.over_how_many_past_periods %} ${over_periods.n} {% endcondition %}
+      END;;
+
+  }
+
+
+  # Rename (& optionally repeat) below join to match your pop view(s)
+  join: pop_order_items_method_8 {
+    from: pop_order_items_method_8
+    type: left_outer
+    relationship: many_to_one
+    sql_on:
+    CASE
+
+    WHEN {% parameter pop_method_8.within_period_type %} = 'hour' THEN
+        DATE(DATE_TRUNC(
+          DATE_ADD(DATE_ADD({% date_end pop_method_8.date_filter %}, INTERVAL (0 - ${within_periods.n}) HOUR), INTERVAL (0 - ${over_periods.n}) HOUR),
+          HOUR
+        ))
+    WHEN {% parameter pop_method_8.within_period_type %} = 'week' THEN
+        DATE(DATE_TRUNC(
+          DATE_ADD(DATE_ADD(DATE({% date_end pop_method_8.date_filter %}), INTERVAL (0 - ${within_periods.n}) WEEK), INTERVAL (0 - ${over_periods.n}) WEEK),
+          WEEK
+        ))
+
+
+      WHEN {% parameter pop_method_8.within_period_type %} = 'day' THEN
+        DATE(DATE_TRUNC(
+          DATE_ADD(TIMESTAMP_ADD(TIMESTAMP({% date_end pop_method_8.date_filter %}), INTERVAL (0 - ${within_periods.n}) DAY), INTERVAL (0 - ${over_periods.n}) DAY),
+          DAY
+        ))
+
+      WHEN {% parameter pop_method_8.within_period_type %} = 'month' THEN
+        DATE(DATE_TRUNC(
+          DATE_ADD(DATE_ADD(DATE({% date_end pop_method_8.date_filter %}), INTERVAL (0 - ${within_periods.n}) MONTH), INTERVAL (0 - ${over_periods.n}) MONTH),
+          MONTH
+        ))
+      WHEN {% parameter pop_method_8.within_period_type %} = 'quarter' THEN
+        DATE(DATE_TRUNC(
+          DATE_ADD(DATE_ADD(DATE({% date_end pop_method_8.date_filter %}), INTERVAL (0 - ${within_periods.n}) QUARTER), INTERVAL (0 - ${over_periods.n}) QUARTER),
+          QUARTER
+        ))
+      ELSE
+        DATE(DATE_TRUNC(
+          DATE_ADD(TIMESTAMP_ADD(TIMESTAMP({% date_end pop_method_8.date_filter %}), INTERVAL (0 - ${within_periods.n}) DAY), INTERVAL (0 - ${over_periods.n}) DAY),
+          DAY
+        ))
+    END
+    = DATE(pop_order_items_method_8.join_date) ;;
+  }
+}
 
 explore: pop_parameters_multi_period {
   label: "PoP Method 4: Compare multiple templated periods"
