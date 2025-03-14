@@ -52,4 +52,5 @@ GROUP BY 1
     label: "Total Sales"
     sql: SUM(${TABLE}.agg_2) ;;
   }
+
 }

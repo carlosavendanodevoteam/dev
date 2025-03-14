@@ -124,7 +124,7 @@ explore: test_region {}
 
 
 explore: flexible_pop8 {
-  label: "PoP Method 8: Flexible implementation to compare any period to any other"
+  label: "LPoP Method 8: Flexible implementation to compare any period to any other"
   from:  pop_method_8
   view_name: pop_method_8
 
@@ -194,13 +194,15 @@ join: within_periods {
     type: left_outer
     relationship: one_to_many
     sql_on:
-                      CASE WHEN {% condition pop_method_8.over_how_many_past_periods %} NULL {% endcondition %}
-                      THEN
-                        ${over_periods.n} <= 1
-                      ELSE
-                        {% condition pop_method_8.over_how_many_past_periods %} ${over_periods.n} {% endcondition %}
-                      END;;
+      CASE WHEN {% condition pop_method_8.over_how_many_past_periods %} NULL {% endcondition %}
+      THEN
+        ${over_periods.n} <= 1
+      ELSE
+        {% condition pop_method_8.over_how_many_past_periods %} ${over_periods.n} {% endcondition %}
+      END;;
+
   }
+
 
   # Rename (& optionally repeat) below join to match your pop view(s)
   join: pop_order_items_method_8 {
