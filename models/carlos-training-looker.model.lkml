@@ -14,7 +14,7 @@ datagroup: carlos_training_looker_default_datagroup {
 }
 
 access_grant: access_test_rsi {
-  user_attribute: test_rsi
+  user_attribute: test_grant
   allowed_values: [ "yes" ]
 }
 
@@ -71,7 +71,6 @@ explore: order_items {
   #  field: status
   #  user_attribute: status_filter
   #}
-
 
 
 #sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
