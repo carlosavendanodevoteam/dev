@@ -46,15 +46,13 @@ explore: products {}
 
 explore: distribution_centers {}
 explore: order_items_test_manu {
-  join: users {
-    type: left_outer
-    sql_on: ${order_items_test_manu.user_id} = ${users.id} ;;
-    relationship: many_to_one
-  }
-  join: parameters {
-    sql_on: 1=1 ;;  # Esta es la condición que siempre se cumple para los parámetros
-    relationship: many_to_one
-  }
+  extends: [order_items_test_manu]
+  sql_always_where:
+    1=1
+    {% if order_items_test_manu.current_vs_previous_period_advanced._in_query %}AND ${order_items_test_manu.current_vs_previous_period_advanced} IS NOT NULL{% endif %}
+    {% if parameters.apply_to_date_filter_advanced._is_filtered %}AND ${order_items_test_manu.is_to_date_advanced}{% endif %}
+   ;;
+    join: parameters {}
 }
 explore: orders {}
 
