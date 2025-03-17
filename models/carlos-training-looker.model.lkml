@@ -35,6 +35,7 @@ map_layer: test_map {
 # Typically, join parameters require that you define the join type, join relationship, and a sql_on clause.
 # Each joined view also needs to define a primary key.
 
+explore: test_derived_table {}
 explore: inventory_items {
 }
 
