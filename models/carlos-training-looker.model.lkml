@@ -43,11 +43,16 @@ explore: vista_sql_runner {}
 
 explore: products {}
 
+
 explore: distribution_centers {}
 explore: order_items_test_manu {
   join: users {
     type: left_outer
     sql_on: ${order_items_test_manu.user_id} = ${users.id} ;;
+    relationship: many_to_one
+  }
+  join: parameters {
+    sql_on: 1=1 ;;  # Esta es la condición que siempre se cumple para los parámetros
     relationship: many_to_one
   }
 }
