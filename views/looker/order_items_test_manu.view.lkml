@@ -1,4 +1,5 @@
 view: order_items_test_manu {
+  sql_table_name: `looker.order_items_extended` ;;
   dimension_group: created {
     type: time
     timeframes: [
