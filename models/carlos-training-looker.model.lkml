@@ -35,6 +35,7 @@ map_layer: test_map {
 # Typically, join parameters require that you define the join type, join relationship, and a sql_on clause.
 # Each joined view also needs to define a primary key.
 
+explore: test_derived_table {}
 explore: inventory_items {
 }
 
@@ -42,13 +43,16 @@ explore: vista_sql_runner {}
 
 explore: products {}
 
+
 explore: distribution_centers {}
 explore: order_items_test_manu {
-  join: users {
-    type: left_outer
-    sql_on: ${order_items_test_manu.user_id} = ${users.id} ;;
-    relationship: many_to_one
-  }
+  extends: [order_items_test_manu]
+  sql_always_where:
+    1=1
+    {% if order_items_test_manu.current_vs_previous_period_advanced._in_query %}AND ${order_items_test_manu.current_vs_previous_period_advanced} IS NOT NULL{% endif %}
+    {% if parameters.apply_to_date_filter_advanced._is_filtered %}AND ${order_items_test_manu.is_to_date_advanced}{% endif %}
+   ;;
+    join: parameters {}
 }
 explore: orders {}
 
@@ -67,21 +71,18 @@ explore: order_items {
 
 
 
-  # access_filter: {
-  #  field: status
-  #  user_attribute: status_filter
-  #}
-
-
 #sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
+
+
+  # access_filter: {
+ #   field: status
+ #   user_attribute: status_filter
+ # }
 
 #always_filter:
 #{
 #filters: [distribution_centers.name: "Houston TX"]
  #}
-
-
-
 
 
 
