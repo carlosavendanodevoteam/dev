@@ -45,7 +45,7 @@ view: order_items_test_manu {
   }
 
   dimension: order_id {
-    required_access_grants: [access_test_rsi]
+    required_access_grants: [access_test]
     type: number
     sql: ${TABLE}.order_id ;;
   }

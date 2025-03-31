@@ -448,7 +448,7 @@ view: pop_parameters_multi_period {
   # Dates and timestamps can be represented in Looker using a dimension group of type: time.
   # Looker converts dates and timestamps to the specified timeframes within the dimension group.
   parameter: filtro_transportista {
-    required_access_grants: [access_test_rsi]
+    required_access_grants: [access_test]
     type: unquoted
     allowed_value: {
       label: "Titulo 1"
@@ -624,7 +624,7 @@ view: pop_parameters_multi_period {
   }
 
   dimension: order_id {
-    required_access_grants: [access_test_rsi]
+    required_access_grants: [access_test]
     type: number
     sql: ${TABLE}.order_id ;;
   }
