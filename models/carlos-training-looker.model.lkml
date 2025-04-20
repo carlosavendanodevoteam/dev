@@ -24,6 +24,15 @@ map_layer: test_map {
   file: "/maps/final_modified.topojson"
 }
 
+map_layer: provinces {
+  file: "/maps/spain-provinces-geo.geojson"
+}
+
+map_layer: municipios {
+  file: "/maps/spain-municipalities.geojson"
+}
+
+
 # Explores allow you to join together different views (database tables) based on the
 # relationships between fields. By joining a view into an Explore, you make those
 # fields available to users for data analysis.
