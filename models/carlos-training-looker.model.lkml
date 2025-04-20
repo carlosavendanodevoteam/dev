@@ -32,6 +32,10 @@ map_layer: municipios {
   file: "/maps/spain-municipalities.geojson"
 }
 
+map_layer: comunidades {
+  file: "/maps/spain-communities.geojson"
+}
+
 
 # Explores allow you to join together different views (database tables) based on the
 # relationships between fields. By joining a view into an Explore, you make those
@@ -124,9 +128,9 @@ explore: order_items {
 
 }
 
-explore: test_region {}
-
-
+explore: renta_municipios_refined {}
+explore: ccaa_esperanza_vida_refined{}
+explore: ccaa_ejercicio_refined {}
 explore: flexible_pop8 {
   label: "LPoP Method 8: Flexible implementation to compare any period to any other"
   from:  pop_method_8
