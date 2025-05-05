@@ -36,6 +36,10 @@ map_layer: comunidades {
   file: "/maps/spain-communities.geojson"
 }
 
+map_layer: postal {
+  file: "/maps/spain-postalcodes.topojson"
+}
+
 
 # Explores allow you to join together different views (database tables) based on the
 # relationships between fields. By joining a view into an Explore, you make those
