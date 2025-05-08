@@ -73,7 +73,6 @@ explore: users {
    # sql_always_where: ${age}=20 ;;
 }
 
-explore: test_map {}
 
 explore: order_items {
 
