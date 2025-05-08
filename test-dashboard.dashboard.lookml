@@ -51,6 +51,13 @@
     col: 0
     width: 14
     height: 8
+  - name: add_a_unique_name_1746689123
+    title: Untitled Visualization
+    model: carlos-training-looker
+    explore: order_items
+    type: table
+    fields: [order_items.user_id, order_items.order_count]
+    limit: 500
   filters:
   - name: Gender
     title: Gender
@@ -65,10 +72,3 @@
     explore: order_items
     listens_to_filters: []
     field: users.gender
-  - name: add_a_unique_name_1746689123
-    title: Untitled Visualization
-    model: carlos-training-looker
-    explore: order_items
-    type: table
-    fields: [order_items.user_id, order_items.order_count]
-    limit: 500
