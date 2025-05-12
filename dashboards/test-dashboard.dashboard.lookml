@@ -58,6 +58,7 @@
     type: table
     fields: [order_items.user_id, order_items.order_count]
     limit: 500
+
   filters:
   - name: Gender
     title: Gender
