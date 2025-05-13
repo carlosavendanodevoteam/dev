@@ -678,6 +678,22 @@ dimension: sale_price {
 
   }
 
+  measure: total_sales_last_year {
+    type: period_over_period
+    based_on: total_sales
+    based_on_time: created_year
+    period: year
+    kind: previous
+  }
+
+  measure: total_sales_last_month {
+    type: period_over_period
+    based_on: total_sales
+    based_on_time: created_year
+    period: month
+    kind: previous
+  }
+
 
 
 dimension_group: shipped {
