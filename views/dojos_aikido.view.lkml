@@ -62,6 +62,7 @@ view: dojos_aikido {
     sql: ${TABLE}.Nombre ;;
   }
   dimension: organizaci__n {
+    required_access_grants: [access_organizacion]
     label: "Organización"
     type: string
     sql: ${TABLE}.Organizaci__n ;;
