@@ -78,13 +78,13 @@ explore: order_items {
 
 
 
-# sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
+sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
 
 
-   access_filter: {
-    field: status
-   user_attribute: status_filter
-  }
+  # access_filter: {
+  #   field: status
+  # user_attribute: status_filter
+  # }
 
 
 
