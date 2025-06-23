@@ -142,4 +142,27 @@ dimension: display_product_sku {
        END ;;
   label: "Product SKU 1"
 }
+
+#Parámetro para los Reports de Studio
+  parameter: selected_column_display {
+    type: string
+    label: "Seleccionar Columnas a Mostrar"
+    allowed_value: {
+      value: "ALL"
+      label: "Mostrar Todas"
+    }
+    allowed_value: {
+      value: "Category"
+      label: "Solo Categoría"
+    }
+    allowed_value: {
+      value: "Brand"
+      label: "Solo Marca"
+    }
+    allowed_value: {
+      value: "SKU"
+      label: "Solo SKU"
+    }
+    default_value: "ALL" # Valor por defecto cuando se carga la exploración/dashboard
+  }
 }
