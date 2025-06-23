@@ -165,4 +165,31 @@ dimension: display_product_sku {
     }
     default_value: "ALL" # Valor por defecto cuando se carga la exploración/dashboard
   }
+
+  dimension: display_product_category2 {
+    type: string
+    sql: CASE
+       WHEN {% parameter selected_column_display %} IN ('ALL', 'Category') THEN ${product_category}
+       ELSE NULL
+       END ;;
+    label: "display_product_category2"
+  }
+
+  dimension: display_product_brand2 {
+    type: string
+    sql: CASE
+       WHEN {% parameter selected_column_display %} IN ('ALL', 'Brand') THEN ${product_brand}
+       ELSE NULL
+       END ;;
+    label: "display_product_brand2"
+  }
+
+  dimension: display_product_sku2 {
+    type: string
+    sql: CASE
+       WHEN {% parameter selected_column_display %} IN ('ALL', 'SKU') THEN ${product_sku}
+       ELSE NULL
+       END ;;
+    label: "display_product_sku2"
+  }
 }
