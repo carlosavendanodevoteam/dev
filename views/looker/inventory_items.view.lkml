@@ -193,6 +193,7 @@ dimension: display_product_sku {
     label: "display_product_category3"
   }
 
+<<<<<<< HEAD
   dimension: display_product_brand3 {
     type: string
     sql: CASE
@@ -210,5 +211,159 @@ dimension: display_product_sku {
        END ;;
     label: "display_product_sku3"
   }
+=======
+#NUEVO INTENTO DE SELF-SERVICES
+
+  parameter: SelectorN1 {
+    group_label: "Selector N1"
+    allowed_value: {
+      label: "product_category"
+      value: "product_category"
+    }
+    allowed_value: {
+      label: "product_department"
+      value: "product_department"
+    }
+    allowed_value: {
+      label: "product_brand"
+      value: "product_brand"
+    }
+    allowed_value: {
+      label: "product_sku"
+      value: "product_sku"
+    }
+    allowed_value: {
+      label: "Ninguna"
+      value: "null"
+    }
+
+  }
+  parameter: SelectorN2 {
+    group_label: "Selector N2"
+    allowed_value: {
+      label: "product_category"
+      value: "product_category"
+    }
+    allowed_value: {
+      label: "product_department"
+      value: "product_department"
+    }
+    allowed_value: {
+      label: "product_brand"
+      value: "product_brand"
+    }
+    allowed_value: {
+      label: "product_sku"
+      value: "product_sku"
+    }
+    allowed_value: {
+      label: "Ninguna"
+      value: "null"
+    }
+
+  }
+
+  parameter: SelectorN3 {
+    group_label: "Selector N2"
+    allowed_value: {
+      label: "product_category"
+      value: "product_category"
+    }
+    allowed_value: {
+      label: "product_department"
+      value: "product_department"
+    }
+    allowed_value: {
+      label: "product_brand"
+      value: "product_brand"
+    }
+    allowed_value: {
+      label: "product_sku"
+      value: "product_sku"
+    }
+    allowed_value: {
+      label: "Ninguna"
+      value: "null"
+    }
+
+  }
+  parameter: SelectorN4 {
+    group_label: "Selector N2"
+    allowed_value: {
+      label: "product_category"
+      value: "product_category"
+    }
+    allowed_value: {
+      label: "product_department"
+      value: "product_department"
+    }
+    allowed_value: {
+      label: "product_brand"
+      value: "product_brand"
+    }
+    allowed_value: {
+      label: "product_sku"
+      value: "product_sku"
+    }
+    allowed_value: {
+      label: "Ninguna"
+      value: "null"
+    }
+
+  }
+
+  dimension: dimension_N1 {
+    group_label: "Selector N1"
+    type: string
+    sql: ifnull(case when {%parameter SelectorN1%} = "product_category" then ${product_category}
+            when {%parameter SelectorN1%} = "product_department" then ${product_department}
+            when {%parameter SelectorN1%} = "product_brand" then ${product_brand}
+            when {%parameter SelectorN1%} = "product_sku" then ${product_sku}
+            when {% parameter SelectorN1 %} = "Ninguna" then NULL
+            else ""
+            end, "∅");;
+    label_from_parameter: SelectorN1
+  }
+
+  dimension: dimension_N2 {
+    group_label: "Selector N2"
+    type: string
+    sql: ifnull(case when {%parameter SelectorN2%} = "product_category" then ${product_category}
+            when {%parameter SelectorN2%} = "product_department" then ${product_department}
+            when {%parameter SelectorN2%} = "product_brand" then ${product_brand}
+            when {%parameter SelectorN2%} = "product_sku" then ${product_sku}
+           when {% parameter SelectorN2 %} = "Ninguna" then NULL
+            else ""
+            end, "∅");;
+    label_from_parameter: SelectorN2
+  }
+
+  dimension: dimension_N3 {
+    group_label: "Selector N3"
+    type: string
+    sql: ifnull(case when {%parameter SelectorN3%} = "product_category" then ${product_category}
+            when {%parameter SelectorN3%} = "product_department" then ${product_department}
+            when {%parameter SelectorN3%} = "product_brand" then ${product_brand}
+            when {%parameter SelectorN3%} = "product_sku" then ${product_sku}
+            when {% parameter SelectorN3 %} = "Ninguna" then NULL
+            else ""
+            end, "∅");;
+    label_from_parameter: SelectorN3
+  }
+
+  dimension: dimension_N4 {
+    group_label: "Selector N4"
+    type: string
+    sql: ifnull(case when {%parameter SelectorN4%} = "product_category" then ${product_category}
+            when {%parameter SelectorN4%} = "product_department" then ${product_department}
+            when {%parameter SelectorN4%} = "product_brand" then ${product_brand}
+            when {%parameter SelectorN4%} = "product_sku" then ${product_sku}
+            when {% parameter SelectorN4 %} = "Ninguna" then NULL
+            else ""
+            end, "∅");;
+    label_from_parameter: SelectorN4
+  }
+
+>>>>>>> branch 'master' of https://github.com/carlosavendanodevoteam/dev.git
 
 }
