@@ -78,12 +78,12 @@ explore: order_items {
 
 
 
- #sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
+# sql_always_where: ${distribution_centers.name} = "Houston TX" ;;
 
 
-   access_filter: {
+  access_filter: {
     field: status
-   user_attribute: status_filter
+  user_attribute: status_filter
   }
 
 
@@ -323,4 +323,63 @@ explore: flexible_pop {
     );;
   }
 }
-explore: dojos_aikido {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+access_grant: access_organizacion {
+  user_attribute: organizacion
+  allowed_values: [ "administrador" ]
+}
+
+explore: dojos_aikido {
+
+ #access_filter: {
+ #field: organizaci__n
+ #user_attribute: organizacion
+ #}
+
+}
