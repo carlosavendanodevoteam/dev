@@ -96,4 +96,50 @@ measure: count {
   type: count
   drill_fields: [id, product_name, products.name, products.id, order_items.count]
 }
+
+  parameter: show_product_category_param {
+    type: yesno
+    label: "Mostrar Product Category"
+    default_value: "yes"
+  }
+
+  parameter: show_product_brand_param {
+    type: yesno
+    label: "Mostrar Product Brand"
+    default_value: "yes"
+  }
+
+  parameter: show_product_sku_param {
+    type: yesno
+    label: "Mostrar Product SKU"
+    default_value: "yes"
+  }
+
+# NUEVAS DIMENSIONES CONDICIONALES PARA MOSTRAR/OCULTAR
+dimension: display_product_category {
+  type: string
+  sql: CASE
+       WHEN {% parameter show_product_category_param %} IS TRUE THEN ${product_category}
+       ELSE NULL
+       END ;;
+  label: "Product Category 1"
+}
+
+dimension: display_product_brand {
+  type: string
+  sql: CASE
+       WHEN {% parameter show_product_brand_param %} IS TRUE THEN ${product_brand}
+       ELSE NULL
+       END ;;
+  label: "Product Brand 1"
+}
+
+dimension: display_product_sku {
+  type: string
+  sql: CASE
+       WHEN {% parameter show_product_sku_param %} IS TRUE THEN ${product_sku}
+       ELSE NULL
+       END ;;
+  label: "Product SKU 1"
+}
 }
