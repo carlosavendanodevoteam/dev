@@ -147,7 +147,7 @@ dimension: display_product_sku {
 #Prueba 2:Parámetro para los Reports de Studio
   parameter: Nivel_de_Detalle_Seleccionado {
     type: string
-    label: "Seleccionar Columnas a Mostrar"
+    label: "Nivel_de_Detalle_Seleccionado"
 
     allowed_value: {
       value: "Category"
@@ -193,7 +193,7 @@ dimension: display_product_sku {
     label: "display_product_category3"
   }
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
   dimension: display_product_brand3 {
     type: string
     sql: CASE
@@ -211,7 +211,7 @@ dimension: display_product_sku {
        END ;;
     label: "display_product_sku3"
   }
-=======
+#=======
 #NUEVO INTENTO DE SELF-SERVICES
 
   parameter: SelectorN1 {
@@ -364,6 +364,6 @@ dimension: display_product_sku {
     label_from_parameter: SelectorN4
   }
 
->>>>>>> branch 'master' of https://github.com/carlosavendanodevoteam/dev.git
+#>>>>>>> branch 'master' of https://github.com/carlosavendanodevoteam/dev.git
 
 }
