@@ -97,6 +97,7 @@ measure: count {
   drill_fields: [id, product_name, products.name, products.id, order_items.count]
 }
 
+#Prueba 1:
   parameter: show_product_category_param {
     type: yesno
     label: "Mostrar Product Category"
@@ -115,7 +116,7 @@ measure: count {
     default_value: "yes"
   }
 
-# NUEVAS DIMENSIONES CONDICIONALES PARA MOSTRAR/OCULTAR
+
 dimension: display_product_category {
   type: string
   sql: CASE
@@ -143,56 +144,74 @@ dimension: display_product_sku {
   label: "Product SKU 1"
 }
 
-#Parámetro para los Reports de Studio
-  parameter: selected_column_display {
+#Prueba 2:Parámetro para los Reports de Studio
+  parameter: Nivel_de_Detalle_Seleccionado {
     type: string
-    label: "Seleccionar Columnas a Mostrar"
-    allowed_value: {
-      value: "ALL"
-      label: "Mostrar Todas"
-    }
+    label: "Nivel_de_Detalle_Seleccionado"
+
     allowed_value: {
       value: "Category"
-      label: "Solo Categoría"
+      label: "Category"
     }
     allowed_value: {
       value: "Brand"
-      label: "Solo Marca"
+      label: "Brand"
     }
     allowed_value: {
       value: "SKU"
-      label: "Solo SKU"
+      label: "SKU"
     }
-    default_value: "ALL" # Valor por defecto cuando se carga la exploración/dashboard
+    default_value: "Category" # Valor por defecto cuando se carga la exploración/dashboard
   }
 
-  dimension: display_product_category2 {
+
+  # Prueba 3:
+  parameter: show_category_column {
+    type: yesno
+    label: "Product Category 3" # Etiqueta para el botón en el dashboard
+    default_value: "yes" # Por defecto, la categoría se muestra
+  }
+
+  parameter: show_brand_column {
+    type: yesno
+    label: "Product Brand 3" # Etiqueta para el botón en el dashboard
+    default_value: "yes" # Por defecto, la marca se muestra
+  }
+
+  parameter: show_sku_column {
+    type: yesno
+    label: "Product SKU 3" # Etiqueta para el botón en el dashboard
+    default_value: "yes" # Por defecto, el SKU se muestra
+  }
+
+  dimension: display_product_category3 {
     type: string
     sql: CASE
-       WHEN {% parameter selected_column_display %} IN ('ALL', 'Category') THEN ${product_category}
+       WHEN {% parameter show_category_column %} THEN ${product_category}
        ELSE NULL
        END ;;
-    label: "display_product_category2"
+    label: "display_product_category3"
   }
 
-  dimension: display_product_brand2 {
+#<<<<<<< HEAD
+  dimension: display_product_brand3 {
     type: string
     sql: CASE
-       WHEN {% parameter selected_column_display %} IN ('ALL', 'Brand') THEN ${product_brand}
+       WHEN {% parameter show_brand_column %} THEN ${product_brand}
        ELSE NULL
        END ;;
-    label: "display_product_brand2"
+    label: "display_product_brand3"
   }
 
-  dimension: display_product_sku2 {
+  dimension: display_product_sku3 {
     type: string
     sql: CASE
-       WHEN {% parameter selected_column_display %} IN ('ALL', 'SKU') THEN ${product_sku}
+       WHEN {% parameter show_sku_column %} THEN ${product_sku}
        ELSE NULL
        END ;;
-    label: "display_product_sku2"
+    label: "display_product_sku3"
   }
-
+#=======
 #NUEVO INTENTO DE SELF-SERVICES
 
   parameter: SelectorN1 {
@@ -345,5 +364,6 @@ dimension: display_product_sku {
     label_from_parameter: SelectorN4
   }
 
+#>>>>>>> branch 'master' of https://github.com/carlosavendanodevoteam/dev.git
 
 }
