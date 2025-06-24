@@ -196,7 +196,7 @@ dimension: display_product_sku {
 #NUEVO INTENTO DE SELF-SERVICES
 
   parameter: SelectorN1 {
-    group_label: "Selector N1"
+    group_label: "Selector"
     allowed_value: {
       label: "product_category"
       value: "product_category"
@@ -220,7 +220,7 @@ dimension: display_product_sku {
 
   }
   parameter: SelectorN2 {
-    group_label: "Selector N2"
+    group_label: "Selector"
     allowed_value: {
       label: "product_category"
       value: "product_category"
@@ -245,7 +245,7 @@ dimension: display_product_sku {
   }
 
   parameter: SelectorN3 {
-    group_label: "Selector N2"
+    group_label: "Selector"
     allowed_value: {
       label: "product_category"
       value: "product_category"
@@ -269,7 +269,7 @@ dimension: display_product_sku {
 
   }
   parameter: SelectorN4 {
-    group_label: "Selector N2"
+    group_label: "Selector"
     allowed_value: {
       label: "product_category"
       value: "product_category"
