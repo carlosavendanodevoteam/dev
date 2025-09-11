@@ -30,12 +30,6 @@ view: orders {
     sql: ${TABLE}.gender ;;
   }
 
-dimension: test_bm {
-type: number
-sql: 1 ;;
-}
-
-
   dimension: num_of_item {
     type: number
     sql: ${TABLE}.num_of_item ;;
