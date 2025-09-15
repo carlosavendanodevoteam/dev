@@ -740,7 +740,7 @@ measure: total_revenue {
 
 measure: total_revenue_from_completed_orders {
   type: sum
-  sql: ${sale_price} ;;
+  sql: ${sale_price}* (0.7 + RAND() * 0.3) ;;
   filters: [status: "Complete"]
   value_format_name: usd
 }

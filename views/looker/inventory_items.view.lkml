@@ -44,6 +44,7 @@ dimension: product_brand {
 
 dimension: product_category {
   type: string
+  drill_fields: [product_category, product_brand, product_department, count]
   sql: ${TABLE}.product_category ;;
 }
 
@@ -94,7 +95,7 @@ dimension_group: sold {
 
 measure: count {
   type: count
-  drill_fields: [id, product_name, products.name, products.id, order_items.count]
+  drill_fields: [product_category, product_brand, product_department, count]
 }
 
 #Prueba 1:
