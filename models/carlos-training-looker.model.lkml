@@ -57,7 +57,12 @@ explore: inventory_items {
 }
 
 
-explore: products {}
+explore: products {
+  always_filter: {
+    filters: [category: "Accessories"]
+  }
+
+}
 
 
 explore: distribution_centers {}
