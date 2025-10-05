@@ -3,6 +3,7 @@ connection: "carlos-looker-training"
 
 # include all the views
 include: "/views/**/*.view.lkml"
+include: "/derived_tables/**/*.view.lkml"
 include: "/dashboards/*.dashboard.lookml"
 # Datagroups define a caching policy for an Explore. To learn more,
 # use the Quick Help panel on the right to see documentation.
@@ -51,6 +52,11 @@ map_layer: postal {
 # To create more sophisticated Explores that involve multiple views, you can use the join parameter.
 # Typically, join parameters require that you define the join type, join relationship, and a sql_on clause.
 # Each joined view also needs to define a primary key.
+
+explore: bq_queries {
+
+
+}
 
 
 explore: inventory_items {
