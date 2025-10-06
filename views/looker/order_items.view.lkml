@@ -10,7 +10,7 @@ view: order_items {
   # define primary_key: yes on a dimension that has no repeated values.
 
 
-# TEST DIGLO 2
+
 
   parameter: choose_breakdown {
     label: "Choose Grouping (Rows)"
@@ -336,10 +336,7 @@ view: order_items {
 
 
 
-# TEST DIGLO 2 END
 
-
-# TEST DIGLO
   parameter: selected_date {
     type: date
     description: "Selecciona un día de referencia"
@@ -378,8 +375,6 @@ measure: total_sales_filtered {
 
 
 
-
-  # TEST DIGLO END
 
 
 
