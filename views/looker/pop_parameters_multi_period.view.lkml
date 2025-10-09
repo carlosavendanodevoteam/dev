@@ -10,7 +10,7 @@ view: pop_parameters_multi_period {
   # define primary_key: yes on a dimension that has no repeated values.
 
 
-# TEST DIGLO 2
+
 
   parameter: choose_breakdown {
     label: "Choose Grouping (Rows)"
@@ -349,10 +349,6 @@ view: pop_parameters_multi_period {
 
 
 
-# TEST DIGLO 2 END
-
-
-# TEST DIGLO
   parameter: selected_date {
     type: date
     description: "Selecciona un día de referencia"
@@ -390,9 +386,6 @@ view: pop_parameters_multi_period {
 
 
 
-
-
-  # TEST DIGLO END
 
 
 
