@@ -18,7 +18,7 @@ view: orders {
 
   dimension_group: delivered {
     type: time
-    timeframes: [raw, time, date, week, month, quarter, year]
+    timeframes: [raw, time, date, week, month, quarter]
     sql: ${TABLE}.delivered_at ;;
   }
     # Here's what a typical dimension looks like in LookML.
