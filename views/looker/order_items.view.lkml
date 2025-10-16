@@ -750,6 +750,40 @@ dimension: year_to_date {
 }
 
 
+# Parámetro prueba idiomas
+
+  parameter: selected_language {
+    type: string
+    label: "Language"
+    allowed_value: {
+      value: "english"
+      label: "English"
+    }
+    allowed_value: {
+      value: "spanish"
+      label: "Spanish"
+    }
+    default_value: "english"
+  }
+
+
+
+  dimension: order_item_id_language {
+    label:"{% if selected_language._parameter_value == \"'english'\" %}Order ID{% else %}Identificador Pedido{% endif %}"
+    type: number
+    sql: ${TABLE}.id ;;
+  }
+
+
+  measure: total_revenue_language {
+    label:  "{% if selected_language._parameter_value == \"'english'\" %}Total Revenue{% else %}Ingresos Totales{% endif %}"
+    type: sum
+    sql: ${sale_price} ;;
+    value_format_name: usd
+  }
+
+
+
 # ----- Sets of fields for drilling ------
 set: detail {
   fields: [
