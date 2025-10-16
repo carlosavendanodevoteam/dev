@@ -768,6 +768,21 @@ dimension: year_to_date {
 
 
 
+  #dimension: revenue_per_order_title_language{
+  #  label:"{% if selected_language._parameter_value == \"'english'\" %}Revenue per Order{% else %}Ingresos por Pedido{% endif %}"
+ #   type: string ;;
+  #}
+
+dimension: revenue_per_order_title_language {
+  label: "Título Dinámico del Dashboard"
+  type: string
+  sql:
+    CASE
+      WHEN {% parameter selected_language %} = 'english' THEN 'Revenue per Order'
+      ELSE 'Ingresos por Pedido'
+    END ;;
+}
+
   dimension: order_item_id_language {
     label:"{% if selected_language._parameter_value == \"'english'\" %}Order ID{% else %}Identificador Pedido{% endif %}"
     type: number
