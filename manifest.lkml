@@ -8,3 +8,12 @@ application: tldd {
     global_user_attributes: ["looker_hackathon_vertexai_tldd_api"]
   }
 }
+
+# This project
+
+project_name: "carlos-training-looker"
+
+# The project to import
+local_dependency: {
+  project: "pruebas_looker_sheila_dev"
+}
