@@ -2,6 +2,7 @@
 connection: "carlos-looker-training"
 
 # include all the views
+include: "//alberto-gonzalez-sandbox/views/**/*.view"
 include: "/views/**/*.view.lkml"
 include: "/derived_tables/**/*.view.lkml"
 include: "/dashboards/*.dashboard.lookml"
@@ -62,6 +63,7 @@ explore: bq_queries {
 explore: inventory_items {
 }
 
+explore: agent {}
 
 explore: products {
   always_filter: {
