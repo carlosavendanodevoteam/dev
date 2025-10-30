@@ -11,6 +11,15 @@ view: events {
     # A dimension is a groupable field that can be used to filter query results.
     # This dimension will be called "Browser" in Explore.
 
+
+
+
+  dimension: test{
+    type: number
+    sql: (SELECT id FROM `carlos-avendano-sandbox.looker.events`)  ;;
+  }
+
+
  dimension: id {
   primary_key: yes
   type: number
