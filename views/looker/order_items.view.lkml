@@ -727,6 +727,27 @@ measure: order_count {
   sql: ${order_id} ;;
 }
 
+  measure: order_count_current_year {
+    type: count_distinct
+    sql:
+    CASE
+      WHEN EXTRACT(YEAR FROM ${created_date})  = EXTRACT(YEAR FROM DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)) THEN ${order_id}
+      ELSE NULL
+    END
+  ;;
+  }
+
+  measure: order_count_previous_year {
+    type: count_distinct
+    sql:
+    CASE
+      WHEN EXTRACT(YEAR FROM ${created_date}) = EXTRACT(YEAR FROM DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) THEN ${order_id}
+      ELSE NULL
+    END
+  ;;
+  }
+
+
 measure: total_revenue {
   type: sum
   sql: ${sale_price} ;;
@@ -795,6 +816,58 @@ dimension: revenue_per_order_title_language {
     type: sum
     sql: ${sale_price} ;;
     value_format_name: usd
+  }
+
+
+
+
+# Year-over-year percent change for the 'contracts_count' measure
+  measure: contracts_yoy_change {
+    type: period_over_period
+    based_on: order_count
+    based_on_time: created_date    # a date dimension in your view (created_date, etc.)
+    period: year
+    kind: relative_change        # returns percentage change
+    value_format_name: percent_2
+  }
+
+# Month-over-month analog (if your dashboard sometimes filters by year+month)
+  measure: contracts_mom_change {
+    type: period_over_period
+    based_on: order_count
+    based_on_time: created_date
+    period: month
+    kind: relative_change
+    value_format_name: percent_2
+  }
+
+  parameter: selected_year {
+    type: number
+
+    allowed_value: {label: "2025" value: "2025"}
+    allowed_value: {label: "2024" value: "2024"}
+    allowed_value: {label: "2023" value: "2023"}
+
+  }
+
+  measure: order_count_selected_year {
+    type: count_distinct
+    sql:
+    CASE
+      WHEN EXTRACT(YEAR FROM ${created_date}) = {{ selected_year._parameter_value }} THEN ${order_id}
+      ELSE NULL
+    END
+  ;;
+  }
+
+  measure: order_count_previous_to_selected_year {
+    type: count_distinct
+    sql:
+    CASE
+      WHEN EXTRACT(YEAR FROM ${created_date}) = ({{ selected_year._parameter_value }} - 1) THEN ${order_id}
+      ELSE NULL
+    END
+  ;;
   }
 
 
