@@ -376,7 +376,17 @@ measure: total_sales_filtered {
 
 
 
+  measure: perc_n_contracts_vo_vs_obj_2 {
+    type: number
+    sql: ${percent_revenue_email_source} ;;
+    value_format_name: "percent_2"
 
+    html:
+    <div title="N Contracts VO vs OBJ %: {{ rendered_value }}">
+      {{ rendered_value }}
+    </div>
+  ;;
+  }
 
 
 
