@@ -2,7 +2,7 @@
 connection: "carlos-looker-training"
 
 # include all the views
-#  include: "//pruebas_laura/views/**/*.view"
+include: "//Sports/views/**/*.view"
 include: "/views/**/*.view.lkml"
 include: "/derived_tables/**/*.view.lkml"
 include: "/dashboards/*.dashboard.lookml"
