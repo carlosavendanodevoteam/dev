@@ -15,5 +15,5 @@ project_name: "carlos-training-looker"
 
 # The project to import
 local_dependency: {
-  project: "alberto-gonzalez-sandbox"
+  project: "pruebas_laura"
 }

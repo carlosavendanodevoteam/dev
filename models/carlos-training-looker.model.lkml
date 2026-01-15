@@ -2,7 +2,7 @@
 connection: "carlos-looker-training"
 
 # include all the views
-include: "//alberto-gonzalez-sandbox/views/**/*.view"
+#  include: "//pruebas_laura/views/**/*.view"
 include: "/views/**/*.view.lkml"
 include: "/derived_tables/**/*.view.lkml"
 include: "/dashboards/*.dashboard.lookml"
@@ -63,7 +63,6 @@ explore: bq_queries {
 explore: inventory_items {
 }
 
-explore: agent {}
 
 explore: products {
   always_filter: {
@@ -124,11 +123,6 @@ explore: order_items {
     relationship: many_to_one
   }
 
-  join: order_details {
-   type: left_outer
-    sql_on: ${order_items.order_id} = ${order_details.order_id};;
-    relationship: many_to_one
-  }
 
 
 
