@@ -95,7 +95,7 @@ explore: order_items {
 
   access_filter: {
     field: status
-  user_attribute: status_filter
+  user_attribute: status_filter_2
   }
 
 
